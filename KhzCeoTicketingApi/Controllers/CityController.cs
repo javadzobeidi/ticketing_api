@@ -18,7 +18,7 @@ public class CityController : ApiControllerBase
     [HttpGet]
     public async Task<IActionResult> List()
     {
-       var result= Mediator.Send(new GetCitiesQuery());
+       var result=await Mediator.Send(new GetCitiesQuery());
        return Success(result);
     }
    
