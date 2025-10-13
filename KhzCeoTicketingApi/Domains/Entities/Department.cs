@@ -8,5 +8,8 @@ public class Department
     public int Id { get; set; }
     public string Title { get; set; }
     public bool IsActive { set; get; }
+    
+    public ICollection<Branch> Branches { get; set; }
+
 }
 

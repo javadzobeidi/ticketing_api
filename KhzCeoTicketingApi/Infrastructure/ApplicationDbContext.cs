@@ -12,12 +12,14 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
    
     public DbSet<User> Users => Set<User>();
     public DbSet<City> Cities => Set<City>();
+    public DbSet<Branch> Branches => Set<Branch>();
 
     public DbSet<Department> Departments => Set<Department>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
+        
 
         builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
     }

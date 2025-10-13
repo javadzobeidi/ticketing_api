@@ -12,6 +12,8 @@ public interface IApplicationDbContext
     DbSet<User> Users { get; }
     DbSet<City> Cities { get; }
     DbSet<Department> Departments { get; }
+    
+     DbSet<Branch> Branches { get; }
 
     Task<IDbContextTransaction> BeginTransactionAsync();
 

@@ -62,7 +62,7 @@ public class ApiExceptionFilterAttribute : ExceptionFilterAttribute
     {
         var exception = (ValidationException)context.Exception;
 
-        var details = new ApiErrorResult("Validation failed. Please check your input data", exception.Errors);
+        var details = new ApiErrorResult("پارامترهای ورودی درست ارسال نشدند", exception.Errors);
         context.Result = new BadRequestObjectResult(details);
 
         context.ExceptionHandled = true;

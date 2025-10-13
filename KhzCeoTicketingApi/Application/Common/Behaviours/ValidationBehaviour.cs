@@ -35,7 +35,7 @@ public sealed class ValidationBehaviour<TRequest, TResponse> : IPipelineBehavior
                 .Where(r => r.Errors.Any())
                 .SelectMany(r => r.Errors)
                 .ToList();
-
+ 
             if (failures.Any())
                 throw new Application.Common.Exceptions.ValidationException(failures);
         }
