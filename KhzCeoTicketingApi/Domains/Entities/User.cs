@@ -19,9 +19,16 @@ public class User
     public string PasswordSalt { set; get; }
     public DateTimeOffset? LastLoginDateTime { set; get; }
 
-    public string Role { set; get; }
     public City City { set; get; }
 
-    public ICollection<UserDepartment>  UserDepartments { set; get; }
+
+    public ICollection<Role> Roles { get; set; } = new List<Role>();
+    public ICollection<UserDepartment> UserDepartments { set; get; }
+
+    public void AddRole(Role role)
+    {
+        Roles.Add(role);
+    }
+
 }
 

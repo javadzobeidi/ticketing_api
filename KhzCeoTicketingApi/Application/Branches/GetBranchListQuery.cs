@@ -8,6 +8,7 @@ namespace KhzCeoTicketingApi.Application.Branches;
 public sealed record GetBranchListQuery : IQuery<List<BranchDto>>
 {
     
+    
 }
 public sealed class GetBranchListQueryValidation : AbstractValidator<GetBranchListQuery>
 {
@@ -23,19 +24,18 @@ public sealed class GetBranchListQueryHandler(IApplicationDbContext context)
     public async ValueTask<List<BranchDto>> Handle(GetBranchListQuery query, CancellationToken cancellationToken)
     {
         var list =await context.Branches
-            .Include(b => b.Departments)
             .Select(branch => new BranchDto
             {
                 Id = branch.Id,
                 Title = branch.Title,
                 CityId = branch.CityId,
                 CityName = branch.City.Title,
-                DepartmentIds = branch.Departments.Select(d => d.Id).ToList(),
-                Departments = branch.Departments.Select(d => new DepartmentDto
+                DepartmentIds = branch.BranchDepartments.Select(d=>d.DepartmentId).ToList(),
+                Departments = branch.BranchDepartments.Select(d => new DepartmentDto
                 {
                     Id = d.Id,
-                    Title = d.Title,
-                    IsActive = d.IsActive
+                    Title = d.Department.Title,
+                    IsActive = d.Department.IsActive
                 }).ToList(),
                 IsActive = branch.IsActive
             }).AsNoTracking().ToListAsync();

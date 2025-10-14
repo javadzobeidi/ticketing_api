@@ -26,7 +26,7 @@ public sealed class GetBranchByIdQueryHandler(IApplicationDbContext context)
     public async ValueTask<BranchDto> Handle(GetBranchByIdQuery query, CancellationToken cancellationToken)
     {
         var branch = await context.Branches
-            .Include(b => b.Departments)
+            .Include(d=>d.BranchDepartments).ThenInclude(d=>d.Department)
             .FirstOrDefaultAsync(b => b.Id == query.Id, cancellationToken);
 
         if (branch == null)
@@ -39,12 +39,12 @@ public sealed class GetBranchByIdQueryHandler(IApplicationDbContext context)
             Id = branch.Id,
             Title = branch.Title,
             CityId = branch.CityId,
-            DepartmentIds = branch.Departments.Select(d => d.Id).ToList(),
-            Departments=branch.Departments.Select(d=>new DepartmentDto
+            DepartmentIds = branch.BranchDepartments.Select(d => d.Id).ToList(),
+            Departments=branch.BranchDepartments.Select(d=>new DepartmentDto
             {
                 Id = d.Id,
-                Title = d.Title,
-                IsActive = d.IsActive
+                Title = d.Department.Title,
+                IsActive = d.Department.IsActive
             }).ToList(),
             IsActive = branch.IsActive
         };

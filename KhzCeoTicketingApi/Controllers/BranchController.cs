@@ -58,4 +58,16 @@ public class BranchController : ApiControllerBase
         var result = await Mediator.Send(query, cancellationToken);
         return Success(result);
     }
+    
+    
+    [HttpGet]
+    [Route("city/{cityId}")]
+    public async Task<ActionResult<List<BranchDto>>> GetBranchByCity(int cityId,CancellationToken cancellationToken)
+    {
+        var query = new GetBranchesByCityQuery { CityId = cityId };
+        
+        var result = await Mediator.Send(query, cancellationToken);
+        return Success(result);
+    }
+
 }

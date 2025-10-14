@@ -19,8 +19,7 @@ public sealed record UpdateUserCommand : ICommand<UserDto>
     public int UserId { set; get; }
     public string FirstName { set; get; }
     public string LastName { set; get; }
-    public string Role { set; get; }
-
+    public int  RoleId { set; get; }
     public List<UserDepartment> UserDepartments { set; get; } = new();
 
 }
@@ -71,12 +70,17 @@ public sealed class UpdateUserCommandHandler : ICommandHandler<UpdateUserCommand
         {
         }
 
+      var currentRole= await _context.Roles.Where(r => r.Id == command.RoleId).FirstOrDefaultAsync();
+      if (currentRole == null)
+          throw new NotFoundException("رول کاربر یافت نشد");
+      
         
         var user = await _context.Users.Where(d => d.UserId==command.UserId).FirstOrDefaultAsync(cancellationToken);
         if (user == null) 
             throw new Exception("کاربر یافت نشد");
         
-        user.Role=command.Role;
+        user.Roles.Clear();
+        user.AddRole(currentRole);
         
         user.UserDepartments.Clear();
 
@@ -88,9 +92,8 @@ public sealed class UpdateUserCommandHandler : ICommandHandler<UpdateUserCommand
                 DepartmentId = d.DepartmentId
             });
         }
-
-    
-     await _context.SaveChangesAsync(cancellationToken);
+        
+         await _context.SaveChangesAsync(cancellationToken);
 
         return UserDto.From(user);
 

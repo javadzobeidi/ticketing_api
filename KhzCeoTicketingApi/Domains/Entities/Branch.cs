@@ -9,6 +9,6 @@ public class Branch
     public bool IsActive { get; set; }
     public City City { set; get; }
     
-    public ICollection<Department> Departments { get; set; }
+    public ICollection<BranchDepartment> BranchDepartments { get; set; }
 }
 

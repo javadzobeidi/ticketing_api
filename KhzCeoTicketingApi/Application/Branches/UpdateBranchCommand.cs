@@ -1,5 +1,6 @@
 using KhzCeoTicketingApi.Application.Common.Interfaces;
 using KhzCeoTicketingApi.Application.Contract;
+using KhzCeoTicketingApi.Domains.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace KhzCeoTicketingApi.Application.Branches;
@@ -18,7 +19,7 @@ public sealed class UpdateBranchCommandHandler(IApplicationDbContext context)
     public async ValueTask<BranchDto> Handle(UpdateBranchCommand command, CancellationToken cancellationToken)
     {
         var branch = await context.Branches
-            .Include(b => b.Departments)
+            .Include(b => b.BranchDepartments)
             .FirstOrDefaultAsync(b => b.Id == command.Id, cancellationToken);
 
         if (branch == null)
@@ -61,7 +62,7 @@ public sealed class UpdateBranchCommandHandler(IApplicationDbContext context)
         branch.IsActive = command.IsActive;
 
         // Update departments
-        branch.Departments.Clear();
+        branch.BranchDepartments.Clear();
         if (command.DepartmentIds.Any())
         {
             var departments = await context.Departments
@@ -70,7 +71,9 @@ public sealed class UpdateBranchCommandHandler(IApplicationDbContext context)
 
             foreach (var department in departments)
             {
-                branch.Departments.Add(department);
+                branch.BranchDepartments.Add(new BranchDepartment{
+                    Department =department
+                    });
             }
         }
 

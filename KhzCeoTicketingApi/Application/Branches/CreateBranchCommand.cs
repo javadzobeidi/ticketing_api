@@ -84,7 +84,12 @@ public sealed class CreateBranchCommandHandler(IApplicationDbContext context)
                 .Where(d => command.DepartmentIds.Contains(d.Id))
                 .ToListAsync(cancellationToken);
 
-            branch.Departments = departments;
+            foreach (var dep in departments)
+                branch.BranchDepartments.Add(new BranchDepartment
+                {
+                    Department = dep
+                });
+            
         }
 
         context.Branches.Add(branch); 

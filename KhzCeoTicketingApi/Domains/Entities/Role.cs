@@ -2,14 +2,17 @@
 
 namespace KhzCeoTicketingApi.Domains.Entities;
 
-[Table("Department")]
-public class Department
+[Table("Role")]
+public class Role
 {
+    public Role()
+    {
+    }
+
     public int Id { get; set; }
     public string Title { get; set; }
-    public bool IsActive { set; get; }
     
-    public ICollection<BranchDepartment> BranchDepartments { get; set; }
+    public ICollection<User> Users { get; set; } = new List<User>();
 
 }
 
