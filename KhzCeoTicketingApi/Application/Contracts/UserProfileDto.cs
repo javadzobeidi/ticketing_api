@@ -14,7 +14,7 @@ public class UserProfileDto
 
     public int RoleId { set; get; }
     public String Role { set; get; }
-
+    public List<ItemValue> UserDepartments { set; get; }=new List<ItemValue>();
     public static UserProfileDto From(User user)
     {
         return new UserProfileDto
@@ -26,8 +26,9 @@ public class UserProfileDto
             Mobile = user.Mobile,
             CityId = user.CityId,
             City = user.City.Title,
-            
            
         };
     }
+    
+    
 }

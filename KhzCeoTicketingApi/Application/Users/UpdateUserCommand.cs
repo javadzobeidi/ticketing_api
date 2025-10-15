@@ -20,7 +20,7 @@ public sealed record UpdateUserCommand : ICommand<UserDto>
     public string FirstName { set; get; }
     public string LastName { set; get; }
     public int  RoleId { set; get; }
-    public List<UserDepartment> UserDepartments { set; get; } = new();
+    public List<int> UserDepartments { set; get; } = new();
 
 }
 
@@ -84,13 +84,23 @@ public sealed class UpdateUserCommandHandler : ICommandHandler<UpdateUserCommand
         
         user.UserDepartments.Clear();
 
-        foreach (var d in command.UserDepartments)
+
+       var branchDepartments=await _context.BranchDepartments.Where(d => command.UserDepartments.Contains(d.Id)).AsNoTracking().ToListAsync();
+       if (branchDepartments.Count() != command.UserDepartments.Count)
+           throw new NotFoundException("کد واحد سازمان درست نیست");
+       
+        foreach (var d in branchDepartments)
         {
             user.UserDepartments.Add(new Domains.Entities.UserDepartment
-            {
-                BranchId = d.BranchId,
-                DepartmentId = d.DepartmentId
-            });
+                {
+                    BranchId =d.BranchId,
+                    DepartmentId = d.DepartmentId
+                    
+                }
+                
+                );
+            
+
         }
         
          await _context.SaveChangesAsync(cancellationToken);

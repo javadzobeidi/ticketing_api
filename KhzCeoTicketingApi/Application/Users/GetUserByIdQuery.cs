@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace KhzCeoTicketingApi.Application.Users;
 
-public sealed record GetUserByIdQuery(int userId) : IQuery<UserProfileDto>
+public sealed record GetUserByIdQuery(long userId) : IQuery<UserProfileDto>
 {
   
 }
@@ -29,9 +29,15 @@ public sealed class GetUserByIdQueryHandler(IApplicationDbContext context,
           FirstName  = u.FirstName,
           LastName  = u.LastName,
           NationalCode  = u.NationalCode,
+          CityId = u.CityId,
         Mobile    = u.Mobile,
         RoleId = u.Roles.Select(r=>r.Id).FirstOrDefault(),
         Role= u.Roles.Select(r=>r.Title).FirstOrDefault(),
+        UserDepartments=u.UserDepartments.Select(d=>new ItemValue
+        {
+            Id = d.Id,
+            Title =" شعبه " + d.Department.Title+" واحد "+d.Branch.Title
+        }).ToList()
         }).FirstOrDefaultAsync(cancellationToken);
         return user;
     }

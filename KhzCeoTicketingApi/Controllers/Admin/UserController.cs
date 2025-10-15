@@ -7,7 +7,7 @@ namespace KhzCeoTicketingApi.Controllers;
 
 
 [ApiController]
-[Route("admin/[controller]")]
+[Route("admin/user")]
 
 public class AdminUserController : ApiControllerBase
 {
@@ -18,17 +18,15 @@ public class AdminUserController : ApiControllerBase
     }
 
     
-    [HttpPut]
-    [Authorize(Roles="Admin")]
-    public async Task<IActionResult> GetUser(RegisterUserCommand command)
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetUser(long id)
     {
-        var result=await Mediator.Send(command);
+        var result=await Mediator.Send(new GetUserByIdQuery (id));
         return Success(result);
     }
     
     
     [HttpPut]
-    [Authorize(Roles="Admin")]
     public async Task<IActionResult> UpdateUser(RegisterUserCommand command)
     {
        var result=await Mediator.Send(command);
