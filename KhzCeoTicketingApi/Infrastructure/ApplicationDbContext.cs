@@ -18,7 +18,8 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     public DbSet<Department> Departments => Set<Department>();
     public DbSet<BranchDepartment> BranchDepartments => Set<BranchDepartment>();
 
-    
+    public DbSet<Appointment> Appoinments => Set<Appointment>();
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);

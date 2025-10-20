@@ -84,7 +84,6 @@ public sealed class UpdateUserCommandHandler : ICommandHandler<UpdateUserCommand
         
         user.UserDepartments.Clear();
 
-
        var branchDepartments=await _context.BranchDepartments.Where(d => command.UserDepartments.Contains(d.Id)).AsNoTracking().ToListAsync();
        if (branchDepartments.Count() != command.UserDepartments.Count)
            throw new NotFoundException("کد واحد سازمان درست نیست");
@@ -95,7 +94,6 @@ public sealed class UpdateUserCommandHandler : ICommandHandler<UpdateUserCommand
                 {
                     BranchId =d.BranchId,
                     DepartmentId = d.DepartmentId
-                    
                 }
                 
                 );

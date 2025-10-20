@@ -14,7 +14,7 @@ public class UserProfileDto
 
     public int RoleId { set; get; }
     public String Role { set; get; }
-    public List<ItemValue> UserDepartments { set; get; }=new List<ItemValue>();
+    public List<UserDepartmentDto> UserDepartments { set; get; }=new List<UserDepartmentDto>();
     public static UserProfileDto From(User user)
     {
         return new UserProfileDto

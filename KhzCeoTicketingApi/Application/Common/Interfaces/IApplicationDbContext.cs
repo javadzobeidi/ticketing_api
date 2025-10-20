@@ -12,6 +12,7 @@ public interface IApplicationDbContext
     DbSet<User> Users { get; }
     DbSet<City> Cities { get; }
     DbSet<Role> Roles { get; }
+    DbSet<Appointment> Appoinments { get; }
 
     DbSet<Department> Departments { get; }
     

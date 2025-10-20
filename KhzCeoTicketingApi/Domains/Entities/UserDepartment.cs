@@ -12,7 +12,6 @@ public class UserDepartment
     public int DepartmentId { get; set; }
     public int BranchId { get; set; }
     public DateTimeOffset AssignedDate { get; set; }  
-    
     public User User { get; set; }
     public Department Department { get; set; }
     public Branch Branch { get; set; }

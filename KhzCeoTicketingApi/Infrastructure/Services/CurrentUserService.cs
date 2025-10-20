@@ -19,12 +19,12 @@ public class CurrentUserService : IUser
 
     // Use ClaimsPrincipal?.FindFirstValue(ClaimTypes.NameIdentifier) or similar
 
-    public long? UserId
+    public long UserId
     {
         get
         {
             var userIdStr = _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
-            return long.TryParse(userIdStr, out var id) ? id : null;
+            return long.TryParse(userIdStr, out var id) ? id : 0;
         }
     }
 

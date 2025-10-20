@@ -51,9 +51,11 @@ public sealed class GetUsersQueryHandler(IApplicationDbContext context,
                 RoleId = u.Roles.Select(r => r.Id).FirstOrDefault(),
                 Role = u.Roles.Select(r => r.Title).FirstOrDefault(),
                 City = u.City.Title,
-                UserDepartments = u.UserDepartments.Select(d => new ItemValue
+                UserDepartments = u.UserDepartments.Select(d => new UserDepartmentDto
                     {
                         Id = d.Id,
+                        DepartmentId = d.DepartmentId,
+                        BranchId = d.BranchId,
                         Title = " شعبه " + d.Department.Title + " واحد " + d.Branch.Title
                     })
                     .ToList()

@@ -4,6 +4,7 @@ using Application.Common.Interfaces;
 using FluentValidation;
 using Infrastructure.Data.Interceptors;
 using KhzCeoTicketingApi.Application.Common.Interfaces;
+using KhzCeoTicketingApi.Application.Contract;
 using KhzCeoTicketingApi.Infrastructure.Data;
 using KhzCeoTicketingApi.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
@@ -37,6 +38,10 @@ builder.Services.AddMediator(
     }
 );
 builder.Services.AddHttpContextAccessor();
+
+builder.Services.Configure<JwtConfig>(
+    builder.Configuration.GetSection("JwtConfig"));
+
 
 builder.Services
 
