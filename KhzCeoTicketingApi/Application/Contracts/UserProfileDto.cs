@@ -11,10 +11,13 @@ public class UserProfileDto
     public string Mobile { set; get; }
     public int CityId { set; get; }
     public string City { set; get; }
-
+    
     public int RoleId { set; get; }
     public String Role { set; get; }
     public List<UserDepartmentDto> UserDepartments { set; get; }=new List<UserDepartmentDto>();
+
+    public List<String> Permissions { set; get; }=new List<string>();
+
     public static UserProfileDto From(User user)
     {
         return new UserProfileDto

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace KhzCeoTicketingApi.Controllers;
 
 [ApiController]
+[Route("[controller]")]
 public class AuthController:ApiControllerBase
 {     
     private readonly ICaptchaService _captchaService;
@@ -19,7 +20,8 @@ public class AuthController:ApiControllerBase
         
     }
     
-    [HttpGet]
+    [HttpPost]
+    [Route("login")]
     public async Task<ActionResult> Login(UserLoginRequest model )
     {
         if (_env.IsDevelopment() == true)
@@ -32,9 +34,12 @@ public class AuthController:ApiControllerBase
                 return Failure("مقدار کپچا درست نیست", null);
             }
 
-            var user = await Mediator.Send(new LoginUserCommand(model.Username, model.Password));
-            GenerateCookie(user);
+          
         }
+        
+        var user = await Mediator.Send(new LoginUserCommand(model.Username, model.Password));
+        GenerateCookie(user);
+        
         
         return Success();
     }

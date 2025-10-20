@@ -14,6 +14,10 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     public DbSet<City> Cities => Set<City>();
     public DbSet<Branch> Branches => Set<Branch>();
     public DbSet<Role> Roles => Set<Role>();
+    
+    public DbSet<Permission> Permissions { get; set; }
+    public DbSet<RolePermission> RolePermissions { get; set; }
+    
 
     public DbSet<Department> Departments => Set<Department>();
     public DbSet<BranchDepartment> BranchDepartments => Set<BranchDepartment>();
@@ -23,6 +27,20 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
+        
+        builder.Entity<RolePermission>()
+            .HasKey(rp => new { rp.RoleId, rp.PermissionId });
+        
+        builder.Entity<RolePermission>()
+            .HasOne(rp => rp.Role)
+            .WithMany(r => r.RolePermissions)
+            .HasForeignKey(rp => rp.RoleId);
+
+        builder.Entity<RolePermission>()
+            .HasOne(rp => rp.Permission)
+            .WithMany(p => p.RolePermissions)
+            .HasForeignKey(rp => rp.PermissionId);
+        
         
         builder.Entity<Branch>()
             .HasOne(b => b.City)

@@ -15,7 +15,9 @@ public interface IApplicationDbContext
     DbSet<Appointment> Appoinments { get; }
 
     DbSet<Department> Departments { get; }
-    
+    DbSet<Permission> Permissions { get; }
+    DbSet<RolePermission> RolePermissions { get; }
+
      DbSet<Branch> Branches { get; }
      DbSet<BranchDepartment> BranchDepartments { get; }
 

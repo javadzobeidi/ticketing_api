@@ -4,6 +4,7 @@ using KhzCeoTicketingApi.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace KhzCeoTicketingApi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251020214816_AddIdentity")]
+    partial class AddIdentity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -163,27 +166,6 @@ namespace KhzCeoTicketingApi.Migrations
                     b.ToTable("Department");
                 });
 
-            modelBuilder.Entity("KhzCeoTicketingApi.Domains.Entities.Permission", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Code")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Permission");
-                });
-
             modelBuilder.Entity("KhzCeoTicketingApi.Domains.Entities.Role", b =>
                 {
                     b.Property<int>("Id")
@@ -199,24 +181,6 @@ namespace KhzCeoTicketingApi.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Role");
-                });
-
-            modelBuilder.Entity("KhzCeoTicketingApi.Domains.Entities.RolePermission", b =>
-                {
-                    b.Property<int>("RoleId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PermissionId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Id")
-                        .HasColumnType("int");
-
-                    b.HasKey("RoleId", "PermissionId");
-
-                    b.HasIndex("PermissionId");
-
-                    b.ToTable("RolePermission");
                 });
 
             modelBuilder.Entity("KhzCeoTicketingApi.Domains.Entities.User", b =>
@@ -370,25 +334,6 @@ namespace KhzCeoTicketingApi.Migrations
                     b.Navigation("Department");
                 });
 
-            modelBuilder.Entity("KhzCeoTicketingApi.Domains.Entities.RolePermission", b =>
-                {
-                    b.HasOne("KhzCeoTicketingApi.Domains.Entities.Permission", "Permission")
-                        .WithMany("RolePermissions")
-                        .HasForeignKey("PermissionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("KhzCeoTicketingApi.Domains.Entities.Role", "Role")
-                        .WithMany("RolePermissions")
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Permission");
-
-                    b.Navigation("Role");
-                });
-
             modelBuilder.Entity("KhzCeoTicketingApi.Domains.Entities.User", b =>
                 {
                     b.HasOne("KhzCeoTicketingApi.Domains.Entities.City", "City")
@@ -450,16 +395,6 @@ namespace KhzCeoTicketingApi.Migrations
             modelBuilder.Entity("KhzCeoTicketingApi.Domains.Entities.Department", b =>
                 {
                     b.Navigation("BranchDepartments");
-                });
-
-            modelBuilder.Entity("KhzCeoTicketingApi.Domains.Entities.Permission", b =>
-                {
-                    b.Navigation("RolePermissions");
-                });
-
-            modelBuilder.Entity("KhzCeoTicketingApi.Domains.Entities.Role", b =>
-                {
-                    b.Navigation("RolePermissions");
                 });
 
             modelBuilder.Entity("KhzCeoTicketingApi.Domains.Entities.User", b =>

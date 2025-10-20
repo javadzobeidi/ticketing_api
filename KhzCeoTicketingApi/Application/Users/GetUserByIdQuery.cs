@@ -33,6 +33,7 @@ public sealed class GetUserByIdQueryHandler(IApplicationDbContext context,
         Mobile    = u.Mobile,
         RoleId = u.Roles.Select(r=>r.Id).FirstOrDefault(),
         Role= u.Roles.Select(r=>r.Title).FirstOrDefault(),
+        Permissions =u.Roles.SelectMany(r=>r.RolePermissions).Select(p=>p.Permission.Code).ToList(),
         UserDepartments=u.UserDepartments.Select(d=>new UserDepartmentDto
         {
             Id = d.Id,

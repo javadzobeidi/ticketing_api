@@ -2,18 +2,20 @@
 
 namespace KhzCeoTicketingApi.Domains.Entities;
 
-[Table("Role")]
-public class Role
+[Table("Permission")]
+public class Permission
 {
-    public Role()
+    public Permission()
     {
     }
 
     public int Id { get; set; }
-    public string Title { get; set; }
+    public string Code { get; set; }
+    public string Description { set; get; }
     
-    public ICollection<User> Users { get; set; } = new List<User>();
     public virtual ICollection<RolePermission> RolePermissions { get; set; }
+
+    
 
 }
 

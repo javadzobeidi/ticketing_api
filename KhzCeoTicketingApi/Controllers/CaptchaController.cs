@@ -19,12 +19,14 @@ public class CaptchaController : ApiControllerBase
     public IActionResult GenerateCaptcha()
     {
         var result = _captchaService.GenerateCaptcha();
-        return Ok(new
-        {
-            success = true,
-            data = result.CaptchaImageBase64,
-            captchaToken = result.Token
-        });
+
+        return Success(
+            new
+            {
+                data = result.CaptchaImageBase64,
+                captchaToken = result.Token
+            });
+
 
     }
 }

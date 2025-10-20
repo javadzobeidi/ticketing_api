@@ -3,6 +3,7 @@ using Application.Common.Behaviours;
 using Application.Common.Interfaces;
 using FluentValidation;
 using Infrastructure.Data.Interceptors;
+using Infrastructure.Services;
 using KhzCeoTicketingApi.Application.Common.Interfaces;
 using KhzCeoTicketingApi.Application.Contract;
 using KhzCeoTicketingApi.Infrastructure.Data;
@@ -38,7 +39,10 @@ builder.Services.AddMediator(
     }
 );
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddDataProtection();
+builder.Services.AddMemoryCache();
 
+builder.Services.AddScoped<ICaptchaService, CaptchaService>();
 builder.Services.Configure<JwtConfig>(
     builder.Configuration.GetSection("JwtConfig"));
 

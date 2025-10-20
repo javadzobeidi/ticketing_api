@@ -27,11 +27,11 @@ public class UserController : ApiControllerBase
        return Success(result);
     }
 
+    [HttpGet]
+    [Route("me")]
     public async Task<IActionResult> Me()
     {
        var id= _user.UserId;
-        
-        
         var result = await Mediator.Send(new GetUserByIdQuery(id));
         return Success(result);
         
