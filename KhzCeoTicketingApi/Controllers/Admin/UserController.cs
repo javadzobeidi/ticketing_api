@@ -24,7 +24,18 @@ public class AdminUserController : ApiControllerBase
         var result=await Mediator.Send(new GetUserByIdQuery (id));
         return Success(result);
     }
-    
+    [HttpGet]
+    public async Task<IActionResult> UserList([FromQuery] string? filter, [FromQuery] int pageNumber = 1,int pageSize=50)
+    {
+        var result=await Mediator.Send(new GetUsersQuery
+        {
+            Filter = filter,
+            PageNumber = pageNumber,
+            PageSize = pageSize
+        });
+        return Success(result);
+    }
+
     
     [HttpPut]
     public async Task<IActionResult> UpdateUser(RegisterUserCommand command)
