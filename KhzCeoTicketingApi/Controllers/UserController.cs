@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Application;
 using Application.Common.Interfaces;
 using KhzCeoTicketingApi.Application.Users;
+using Microsoft.AspNetCore.Authorization;
 
 namespace KhzCeoTicketingApi.Controllers;
 
@@ -29,6 +30,7 @@ public class UserController : ApiControllerBase
 
     [HttpGet]
     [Route("me")]
+    [Authorize]
     public async Task<IActionResult> Me()
     {
        var id= _user.UserId;

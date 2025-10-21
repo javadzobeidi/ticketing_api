@@ -20,9 +20,11 @@ public class User
     public DateTimeOffset? LastLoginDateTime { set; get; }
     public City City { set; get; }
 
+    public bool IsActive { set; get; }
+
     public Guid IdentityKey { set; get; }
     public ICollection<Role> Roles { get; set; } = new List<Role>();
-    public ICollection<UserDepartment> UserDepartments { set; get; }
+    public ICollection<UserDepartment> UserDepartments { set; get; }=new List<UserDepartment>();
 
     public void AddRole(Role role)
     {

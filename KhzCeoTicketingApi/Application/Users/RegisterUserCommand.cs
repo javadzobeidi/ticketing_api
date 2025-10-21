@@ -9,6 +9,7 @@ using System.Net;
 using KhzCeoTicketingApi.Application.Common.Interfaces;
 using KhzCeoTicketingApi.Application.Contract;
 using KhzCeoTicketingApi.Domains.Entities;
+using KhzCeoTicketingApi.Domains.Enums;
 using Microsoft.AspNetCore.Identity;
 
 namespace KhzCeoTicketingApi.Application.Users;
@@ -92,6 +93,11 @@ public sealed class RegisterUserCommandHandler : ICommandHandler<RegisterUserCom
       user.CityId =command.CityId;
      user.Mobile = command.Mobile;
      user.City = city;
+     user.Roles.Add(new Role
+     {
+         Id = (int)RoleEnum.User
+     });
+     
      user.PasswordSalt = PasswordHasher.GenerateSalt();
      user.Password = PasswordHasher.ComputeHash(command.Password, user.PasswordSalt, 3);
      await _context.SaveChangesAsync(cancellationToken);

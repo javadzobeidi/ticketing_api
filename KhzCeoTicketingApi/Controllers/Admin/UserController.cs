@@ -16,7 +16,6 @@ public class AdminUserController : ApiControllerBase
     {
         _logger = logger;
     }
-
     
     [HttpGet("{id}")]
     public async Task<IActionResult> GetUser(long id)
@@ -37,9 +36,11 @@ public class AdminUserController : ApiControllerBase
     }
 
     
-    [HttpPut]
-    public async Task<IActionResult> UpdateUser(RegisterUserCommand command)
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateUser(long id, UpdateUserCommand command)
     {
+        if (command.UserId != id)
+            return Failure("اطلاعات ارسالی همخوانی ندارد");
        var result=await Mediator.Send(command);
        return Success(result);
     }

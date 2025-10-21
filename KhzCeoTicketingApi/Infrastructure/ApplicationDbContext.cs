@@ -69,12 +69,12 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
             entity.HasOne(bd => bd.Branch)
                 .WithMany(b => b.BranchDepartments)
                 .HasForeignKey(bd => bd.BranchId)
-                .OnDelete(DeleteBehavior.NoAction);
+                .OnDelete(DeleteBehavior.Cascade);
 
             entity.HasOne(bd => bd.Department)
                 .WithMany(d => d.BranchDepartments)
                 .HasForeignKey(bd => bd.DepartmentId)
-                .OnDelete(DeleteBehavior.NoAction);
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());

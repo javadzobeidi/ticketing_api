@@ -75,7 +75,11 @@ public sealed class UpdateUserCommandHandler : ICommandHandler<UpdateUserCommand
           throw new NotFoundException("رول کاربر یافت نشد");
       
         
-        var user = await _context.Users.Where(d => d.UserId==command.UserId).FirstOrDefaultAsync(cancellationToken);
+        var user = await _context.Users.Where(d => d.UserId==command.UserId)
+            .Include(d=>d.Roles)
+            .Include(d=>d.UserDepartments)
+            .Include(d=>d.City)
+            .FirstOrDefaultAsync(cancellationToken);
         if (user == null) 
             throw new Exception("کاربر یافت نشد");
         
@@ -97,7 +101,6 @@ public sealed class UpdateUserCommandHandler : ICommandHandler<UpdateUserCommand
                 }
                 
                 );
-            
 
         }
         

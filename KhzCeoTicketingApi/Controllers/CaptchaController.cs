@@ -15,7 +15,6 @@ public class CaptchaController : ApiControllerBase
 
     [HttpGet]
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true, Duration = 0)]
-
     public IActionResult GenerateCaptcha()
     {
         var result = _captchaService.GenerateCaptcha();

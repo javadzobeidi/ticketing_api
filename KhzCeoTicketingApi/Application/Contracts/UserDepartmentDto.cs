@@ -6,5 +6,7 @@ public class UserDepartmentDto
     public int BranchId { set; get; }
     public int DepartmentId { set; get; }
     public string Title { set; get; }
+    public string City { set; get; }
+    
 
 }

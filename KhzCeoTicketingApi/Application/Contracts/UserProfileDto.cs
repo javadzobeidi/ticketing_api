@@ -11,9 +11,11 @@ public class UserProfileDto
     public string Mobile { set; get; }
     public int CityId { set; get; }
     public string City { set; get; }
-    
+    public bool IsActive { set; get; }
     public int RoleId { set; get; }
     public String Role { set; get; }
+
+    public Guid Identity { set; get; }
     public List<UserDepartmentDto> UserDepartments { set; get; }=new List<UserDepartmentDto>();
 
     public List<String> Permissions { set; get; }=new List<string>();

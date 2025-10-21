@@ -19,6 +19,8 @@ public class Appointment
     public int BranchId { set; get; }
     public int CityId { set; get; }
     
+    
+    
     public Branch Branch { set; get; }
     public Department Department { set; get; }
     public City City { set; get; }  

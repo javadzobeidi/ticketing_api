@@ -4,6 +4,7 @@ using Application.Common.Interfaces;
 using FluentValidation;
 using Infrastructure.Data.Interceptors;
 using Infrastructure.Services;
+using KhzCeoTicketingApi;
 using KhzCeoTicketingApi.Application.Common.Interfaces;
 using KhzCeoTicketingApi.Application.Contract;
 using KhzCeoTicketingApi.Infrastructure.Data;
@@ -26,12 +27,8 @@ builder.Services.AddScoped<IApplicationDbContext>(provider => provider.GetRequir
 builder.Services.AddScoped<ISaveChangesInterceptor, AuditableEntityInterceptor>();
 builder.Services.AddScoped<ISaveChangesInterceptor, DispatchDomainEventsInterceptor>();
 builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
-
-
 builder.Services.AddScoped<IUser, CurrentUserService>();
-
 builder.Services.AddHttpContextAccessor();
-
 builder.Services.AddMediator(
     (MediatorOptions options) =>
     {
@@ -55,6 +52,10 @@ builder.Services
     .AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
 
 builder.Services.AddSingleton<TimeProvider>(TimeProvider.System);
+
+builder.Services.AddApplicationAuthorization(builder.Configuration);
+
+
 
 builder.Services.AddCors(options =>
 {
