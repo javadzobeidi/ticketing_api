@@ -62,6 +62,20 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
                     j.ToTable("UserRole");         // Table name in DB
                 });
         
+        builder.Entity<AppointmentMessage>()
+            .HasOne(m => m.Sender)
+            .WithMany()
+            .HasForeignKey(m => m.SenderId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        // اگر بخواهی، رابطه Appointment -> User هم می‌تونه NoAction باشه
+        builder.Entity<Appointment>()
+            .HasOne<User>()
+            .WithMany()
+            .HasForeignKey(a => a.UserId)
+            .OnDelete(DeleteBehavior.NoAction);
+        
+        
         builder.Entity<BranchDepartment>(entity =>
         {
             entity.HasKey(bd => bd.Id); // Or use composite key if you don't need Id

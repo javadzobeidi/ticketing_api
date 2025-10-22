@@ -81,10 +81,13 @@ public static class ApplicationService
                         var claims = new List<Claim>
                         {
                             new(ClaimTypes.NameIdentifier, user.UserId.ToString()),
-                            new(ClaimTypes.Role, user.Role),
                             new(JwtRegisteredClaimNames.Jti, user.Identity.ToString()),
 
                         };
+                        foreach (var r in user.Permissions)
+                        {
+                            claims.Add(new Claim(ClaimTypes.Role, r));
+                        }
 
                         var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                         context.Principal = new ClaimsPrincipal(identity);

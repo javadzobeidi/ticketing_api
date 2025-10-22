@@ -20,7 +20,7 @@ public class AppointmentController : ApiControllerBase
     }
 
     [HttpPost]
-    [Authorize(Roles = "CanManageAppointments")]
+    [Authorize(Roles = "CanManageAppointment")]
     public async Task<ActionResult<BranchDto>> Create(CreateAppointmentCommand command, CancellationToken cancellationToken)
     {
         var result = await Mediator.Send(command, cancellationToken);

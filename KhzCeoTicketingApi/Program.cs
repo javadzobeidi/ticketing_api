@@ -7,6 +7,7 @@ using Infrastructure.Services;
 using KhzCeoTicketingApi;
 using KhzCeoTicketingApi.Application.Common.Interfaces;
 using KhzCeoTicketingApi.Application.Contract;
+using KhzCeoTicketingApi.Filters;
 using KhzCeoTicketingApi.Infrastructure.Data;
 using KhzCeoTicketingApi.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
@@ -16,7 +17,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add<FarsiStringNormalizationFilter>();
+
+});
+
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
@@ -52,10 +58,7 @@ builder.Services
     .AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
 
 builder.Services.AddSingleton<TimeProvider>(TimeProvider.System);
-
 builder.Services.AddApplicationAuthorization(builder.Configuration);
-
-
 
 builder.Services.AddCors(options =>
 {

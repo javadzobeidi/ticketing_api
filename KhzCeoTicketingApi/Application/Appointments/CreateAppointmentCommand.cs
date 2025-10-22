@@ -6,10 +6,11 @@ using KhzCeoTicketingApi.Domains.Entities;
 using Microsoft.EntityFrameworkCore;
 using KhzCeoTicketingApi.Application.Extensions;
 using KhzCeoTicketingApi.Application.Users;
+using KhzCeoTicketingApi.Domains.Enums;
 
 namespace KhzCeoTicketingApi.Application.Branches;
 
-public sealed record CreateAppointmentCommand : ICommand<BranchDto>
+public sealed record CreateAppointmentCommand : ICommand<bool>
 {
     public string StartDate { get; set; }
     public string EndDate { get; set; }
@@ -30,9 +31,9 @@ public sealed class CreateAppointmentCommandValidation : AbstractValidator<Creat
 
 
 public sealed class CreateAppointmentCommandHandler(IApplicationDbContext context,IUser user,IMediator mediator) 
-    : ICommandHandler<CreateAppointmentCommand, BranchDto>
+    : ICommandHandler<CreateAppointmentCommand, bool>
 {
-    public async ValueTask<BranchDto> Handle(CreateAppointmentCommand request, CancellationToken cancellationToken)
+    public async ValueTask<bool> Handle(CreateAppointmentCommand request, CancellationToken cancellationToken)
     {
        var currentUser=await mediator.Send(new GetUserByIdQuery(user.UserId));
       var currentDepartment= currentUser.UserDepartments.Where(d => d.Id == request.UserDepartmentId).FirstOrDefault();
@@ -63,7 +64,7 @@ public sealed class CreateAppointmentCommandHandler(IApplicationDbContext contex
                     throw new Exception("فاصله زمانی انتخاب کنید");
                 }
 
-                for (var date = startDateEn; date <= endDateTime; date = date.Value.AddDays(1))
+                for (var date = startDateEn; date <= endDateTime; date = date.Value.AddMinutes(1))
                 {
                     var currentDateTime = date.Value.Add(tStart);
                     var dayEndDateTime = date.Value.Add(tEnd);
@@ -72,15 +73,13 @@ public sealed class CreateAppointmentCommandHandler(IApplicationDbContext contex
                     {
                         var appointment = new Appointment
                         {
-                            StartDateTime = currentDateTime,
-                            EndDateTime = currentDateTime.Add(TimeSpan.FromMinutes(request.IntervalMinutes)),
-                            StartDate =request.StartDate,
-                            EndDate = request.EndDate,
-                            StartTime = request.StartTime,
-                            EndTime = request.EndTime,
+                            AppointmentDate = currentDateTime,
                             DepartmentId = currentDepartment.DepartmentId,
                             BranchId = currentDepartment.BranchId,
                             CityId = currentUser.CityId,
+                            TimeFa = currentDateTime.ToTime(),
+                            DateFa = currentDateTime.ToPersianDate(),
+                            AppointmentStatus = AppointmentStatus.NoReserver
                             
                         };
                         
@@ -96,10 +95,9 @@ public sealed class CreateAppointmentCommandHandler(IApplicationDbContext contex
                     
                 }
 
-                return new BranchDto();
-                
-
-
-
+               await context.Appoinments.AddRangeAsync(appointments);
+              await context.SaveChangesAsync(cancellationToken);
+              return true;
+              
     }
 }
