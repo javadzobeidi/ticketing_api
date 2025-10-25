@@ -11,6 +11,7 @@ public class AppointmentMessage
 
     public string Message { get; set; } = null!;
     public DateTime SentAt { get; set; } = DateTime.Now;
-
+    public string DateFa { set; get; }
+    public string TimeFa { set; get; }
     public bool IsFromStaff { get; set; }
 }

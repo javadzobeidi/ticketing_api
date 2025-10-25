@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using KhzCeoTicketingApi.Domains.Enums;
 
 namespace KhzCeoTicketingApi.Domains.Entities;
@@ -23,8 +24,26 @@ public class Appointment
     public Branch Branch { set; get; }
     public Department Department { set; get; }
     public City City { set; get; }
-    public AppointmentStatus AppointmentStatus { set; get; }
+    
+    public int AppointmentStatusId { get; set; }
+
+    
+    [NotMapped]
+    public AppointmentStatusEnum AppointmentStatus
+    {
+        get => (AppointmentStatusEnum)AppointmentStatusId;
+        set => AppointmentStatusId = (int)value;
+    }
+    
+    
+    public virtual AppointmentStatus AppointmentStatusDetails { get; set; }
+
+    
     
     public ICollection<AppointmentAssignment> AppointmentAssignments { set; get; }
   public ICollection<AppointmentMessage> AppointmentMessages { set; get; }
+  
+  public virtual User? User { get; set; }  // The main user
+  public virtual User? CurrentAssignmentUser { get; set; }  // The
+  
 }

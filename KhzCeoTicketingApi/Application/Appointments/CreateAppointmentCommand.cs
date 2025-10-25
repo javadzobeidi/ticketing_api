@@ -79,7 +79,7 @@ public sealed class CreateAppointmentCommandHandler(IApplicationDbContext contex
                             CityId = currentUser.CityId,
                             TimeFa = currentDateTime.ToTime(),
                             DateFa = currentDateTime.ToPersianDate(),
-                            AppointmentStatus = AppointmentStatus.NoReserver
+                            AppointmentStatus = AppointmentStatusEnum.NoReserver
                             
                         };
                         

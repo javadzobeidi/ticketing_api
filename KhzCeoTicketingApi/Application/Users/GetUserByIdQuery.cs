@@ -43,6 +43,7 @@ public sealed class GetUserByIdQueryHandler(IApplicationDbContext context,
             Title =" واحد " + d.Department.Title+" شعبه "+d.Branch.Title,
             DepartmentId = d.DepartmentId,
             City = d.Branch.City.Title,
+            CityId = d.Branch.CityId,
             BranchId = d.BranchId
         }).ToList()
         }).FirstOrDefaultAsync(cancellationToken);

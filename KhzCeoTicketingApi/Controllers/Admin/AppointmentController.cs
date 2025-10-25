@@ -9,7 +9,7 @@ namespace KhzCeoTicketingApi.Controllers;
 
 
 [ApiController]
-[Route("admin/[controller]")]
+[Route("admin/appointment")]
 public class AdminAppointmentController : ApiControllerBase
 {
     private readonly ILogger<AppointmentController> _logger;
@@ -27,5 +27,25 @@ public class AdminAppointmentController : ApiControllerBase
         return Success();
     }
     
-  
+    [HttpPost]
+    [Authorize]
+    [Route("list")]
+    public async Task<ActionResult<BranchDto>> List(GetAppointmentsByManager request)
+    {
+        var result = await Mediator.Send(request);
+        return Success(result);
+    }
+    
+    
+
+    [HttpPost]
+    [Authorize]
+    [Route("detail/{id}")]
+    public async Task<ActionResult<BranchDto>> List(long id)
+    {
+        var result = await Mediator.Send(new GetAppointmentDetailsByManage(id));
+        return Success(result);
+    }
+
+    
 }

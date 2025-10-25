@@ -55,7 +55,7 @@ public sealed class GetFreeAppointmentsByBranchHandler(IApplicationDbContext con
             throw new NotFoundException("اطلاعات ارسالی اشتباه است");
 
         var appotinetms=context.Appoinments.Where(d =>
-                d.AppointmentStatus == AppointmentStatus.NoReserver &&
+                d.AppointmentStatus == AppointmentStatusEnum.NoReserver &&
                 d.AppointmentDate.Date==currentDate.Date &&
                 d.BranchId == branchDepartment.BranchId && d.CityId == branchDepartment.CityId &&
                 d.DepartmentId == branchDepartment.DepartmentId)

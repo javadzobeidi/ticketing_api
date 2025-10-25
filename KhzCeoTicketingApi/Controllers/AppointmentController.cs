@@ -37,4 +37,13 @@ public class AppointmentController : ApiControllerBase
         var result = await Mediator.Send(request);
         return Success(result);
     }
+    [HttpPost]
+    [Authorize]
+    [Route("list")]
+    public async Task<ActionResult<BranchDto>> List(GetAppointmentsByUser request)
+    {
+        var result = await Mediator.Send(request);
+        return Success(result);
+    }
+    
 }

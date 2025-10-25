@@ -45,10 +45,10 @@ public sealed class ReserveAppointmentCommandHandler(
     if (entity == null)
         throw new NotFoundException("اطلاعات ارسالی اشتباه است");
 
-    if (entity.AppointmentStatus != AppointmentStatus.NoReserver)
+    if (entity.AppointmentStatus != AppointmentStatusEnum.NoReserver)
         throw new Exception("متاسفانه این ساعت توسط مهندس دیگری رزرو شده است");
 
-    entity.AppointmentStatus = AppointmentStatus.Reserver;
+    entity.AppointmentStatus = AppointmentStatusEnum.Reserver;
     entity.UserId = userId;
     entity.Description = request.Description;
               await context.SaveChangesAsync(cancellationToken);

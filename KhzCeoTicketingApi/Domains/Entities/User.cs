@@ -30,6 +30,11 @@ public class User
     {
         Roles.Add(role);
     }
+    
+    public virtual ICollection<Appointment> UserAppointments { get; set; } = new List<Appointment>();  // For a.User
+    public virtual ICollection<Appointment> AssignmentAppointments { get; set; } = new List<Appointment>();  // For a.CurrentAssignmentUser
+
+    
 
 }
 

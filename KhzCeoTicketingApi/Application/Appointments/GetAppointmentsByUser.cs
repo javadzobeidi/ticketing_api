@@ -49,19 +49,18 @@ public sealed class GetAppointmentsByUserHandler(
     : IQueryHandler<GetAppointmentsByUser, List<AppointmentListUserItem>>
 {
     
-    public async ValueTask<List<AppointmentListUserItem>> Handle(GetAppointmentsByUser query, CancellationToken cancellationToken)
+    public async ValueTask<List<AppointmentListUserItem>> Handle(GetAppointmentsByUser request, CancellationToken cancellationToken)
     {
 
-        DateTime startDate = query.startDate.ToDateTime();
-        DateTime endDate = query.endDate.ToDateTime();
+        DateTime startDate = request.startDate.ToDateTime();
+        DateTime endDate = request.endDate.ToDateTime();
 
        var userId= user.UserId;
+       var query = context.Appoinments.Where(d => d.UserId == userId &&
+                                                  d.AppointmentDate.Date>=startDate.Date && d.AppointmentDate.Date<=endDate.Date);
+       
         
-        
-        var appotinetms=context.Appoinments.Where(d =>
-                d.UserId==userId &&
-                d.AppointmentDate.Date>=startDate.Date && d.AppointmentDate.Date<=endDate.Date
-                )
+        var appotinetms=query
             .Select(d => new AppointmentListUserItem
             {
                Date = d.DateFa,
@@ -69,10 +68,13 @@ public sealed class GetAppointmentsByUserHandler(
                Id = d.Id,
                Branch = d.Branch.Title,
                Department = d.Department.Title,
-               Status = ""
+               Status = d.AppointmentStatusDetails.Title,
+               ResponseLastUser = d.CurrentAssignmentUser != null 
+                   ? $"{d.CurrentAssignmentUser.FirstName} {d.CurrentAssignmentUser.LastName}" 
+                   : null
+               
             })
             .AsNoTracking() .ToList();
-        
         
         
         return appotinetms;

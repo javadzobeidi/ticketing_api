@@ -28,6 +28,25 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     {
         base.OnModelCreating(builder);
         
+        builder.Entity<User>()
+            .HasKey(u => u.UserId);
+        
+        // First relationship: User -> UserAppointments (one-to-many)
+        builder.Entity<User>()
+            .HasMany(u => u.UserAppointments)
+            .WithOne(a => a.User)
+            .HasForeignKey(a => a.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        // Second relationship: User -> AssignmentAppointments (one-to-many)
+        builder.Entity<User>()
+            .HasMany(u => u.AssignmentAppointments)
+            .WithOne(a => a.CurrentAssignmentUser)
+            .HasForeignKey(a => a.CurrentAssignmentUserId)
+            .OnDelete(DeleteBehavior.Restrict);
+        
+        
+        
         builder.Entity<Appointment>()
             .Property(e => e.RowVersion)
             .IsRowVersion()
@@ -73,12 +92,6 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
             .HasForeignKey(m => m.SenderId)
             .OnDelete(DeleteBehavior.NoAction);
 
-        // اگر بخواهی، رابطه Appointment -> User هم می‌تونه NoAction باشه
-        builder.Entity<Appointment>()
-            .HasOne<User>()
-            .WithMany()
-            .HasForeignKey(a => a.UserId)
-            .OnDelete(DeleteBehavior.NoAction);
         
         
         builder.Entity<BranchDepartment>(entity =>
