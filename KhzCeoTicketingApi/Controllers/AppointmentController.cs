@@ -18,14 +18,23 @@ public class AppointmentController : ApiControllerBase
     {
         _logger = logger;
     }
+    
+ 
+    
+    [HttpPost]
+    [Authorize]
+    [Route("FreeList")]
+    public async Task<ActionResult<BranchDto>> FreeAppointmentList(GetFreeAppointmentsByBranch request)
+    {
+        var result = await Mediator.Send(request);
+        return Success(result);
+    }
 
     [HttpPost]
-    [Authorize(Roles = "CanManageAppointment")]
-    public async Task<ActionResult<BranchDto>> Create(CreateAppointmentCommand command, CancellationToken cancellationToken)
+    [Authorize]
+    public async Task<ActionResult<BranchDto>> ReserveAppointment(ReserveAppointmentCommand request)
     {
-        var result = await Mediator.Send(command, cancellationToken);
-        return Success();
+        var result = await Mediator.Send(request);
+        return Success(result);
     }
-    
-
 }

@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using KhzCeoTicketingApi.Domains.Enums;
 
 namespace KhzCeoTicketingApi.Domains.Entities;
@@ -16,6 +17,8 @@ public class Appointment
     public int BranchId { set; get; }
     public int CityId { set; get; }
     
+    [Timestamp]
+    public byte[] RowVersion { get; set; }
     
     public Branch Branch { set; get; }
     public Department Department { set; get; }

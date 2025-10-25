@@ -41,8 +41,8 @@ public sealed class CreateAppointmentCommandHandler(IApplicationDbContext contex
           throw new Exception("متاسفانه اطلاعات دریافتی اشتباه است");
        
         
-        DateTime? startDateEn = request.StartDate.ToPersianDate();
-        DateTime? endDateTime = request.EndDate.ToPersianDate();
+        DateTime? startDateEn = request.StartDate.ToDateTime();
+        DateTime? endDateTime = request.EndDate.ToDateTime();
         TimeSpan tStart = TimeSpan.Parse(request.StartTime);
         TimeSpan tEnd = TimeSpan.Parse(request.EndTime);
 
@@ -64,7 +64,7 @@ public sealed class CreateAppointmentCommandHandler(IApplicationDbContext contex
                     throw new Exception("فاصله زمانی انتخاب کنید");
                 }
 
-                for (var date = startDateEn; date <= endDateTime; date = date.Value.AddMinutes(1))
+                for (var date = startDateEn; date <= endDateTime; date = date.Value.AddDays(1))
                 {
                     var currentDateTime = date.Value.Add(tStart);
                     var dayEndDateTime = date.Value.Add(tEnd);

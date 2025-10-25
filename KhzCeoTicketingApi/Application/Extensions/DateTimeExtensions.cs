@@ -24,12 +24,14 @@ public static  class DateTimeExtensions
 
         return $"{year:0000}/{month:00}/{day:00} {hour:00}:{minute:00}";
     }
-    public static  DateTime? ToPersianDate(this string persianDate)
+    public static  DateTime ToDateTime(this string persianDate)
     {
-        if (string.IsNullOrWhiteSpace(persianDate)) return null;
+        if (string.IsNullOrWhiteSpace(persianDate))
+            throw new Exception("تاریخ معتبر نمی باشد");
 
         var parts = persianDate.Split('/');
-        if (parts.Length != 3) return null;
+        if (parts.Length != 3)
+            throw new Exception("تاریخ معتبر نمی باشد");
 
         int year = int.Parse(parts[0]);
         int month = int.Parse(parts[1]);
@@ -40,7 +42,7 @@ public static  class DateTimeExtensions
     }
     public static  string ToTime(this DateTime dateTime)
     {
-        return $"{dateTime.Hour:00}/{dateTime.Minute:00}";
+        return $"{dateTime.Hour:00}:{dateTime.Minute:00}";
         
     }
 }

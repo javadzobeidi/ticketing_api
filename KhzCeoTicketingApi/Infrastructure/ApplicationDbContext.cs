@@ -28,6 +28,11 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     {
         base.OnModelCreating(builder);
         
+        builder.Entity<Appointment>()
+            .Property(e => e.RowVersion)
+            .IsRowVersion()
+            .IsConcurrencyToken();
+        
         builder.Entity<RolePermission>()
             .HasKey(rp => new { rp.RoleId, rp.PermissionId });
         
