@@ -96,6 +96,7 @@ public sealed class RegisterUserCommandHandler : ICommandHandler<RegisterUserCom
       user.CityId =command.CityId;
      user.Mobile = command.Mobile;
      user.City = city;
+     user.IsActive = true;
      user.Roles.Add(role);
      
      user.PasswordSalt = PasswordHasher.GenerateSalt();

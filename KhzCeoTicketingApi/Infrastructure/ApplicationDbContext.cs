@@ -14,7 +14,8 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     public DbSet<City> Cities => Set<City>();
     public DbSet<Branch> Branches => Set<Branch>();
     public DbSet<Role> Roles => Set<Role>();
-    
+    public DbSet<Ticket> Tickets => Set<Ticket>();
+
     public DbSet<Permission> Permissions { get; set; }
     public DbSet<RolePermission> RolePermissions { get; set; }
     

@@ -49,7 +49,7 @@ public sealed class GetUserByIdQueryHandler(IApplicationDbContext context,
         }).ToList()
         }).FirstOrDefaultAsync(cancellationToken);
 
-        var predicate = PredicateBuilder.New<BranchDepartment>(true);
+        var predicate = PredicateBuilder.New<BranchDepartment>(false);
        
         var branches= user.UserDepartments.Select(d => new
         {
@@ -68,20 +68,28 @@ public sealed class GetUserByIdQueryHandler(IApplicationDbContext context,
             );
         }
 
-
-        user.BranchDepartments=await context.BranchDepartments.AsExpandable().Where(predicate).Select(d => new BranchDepartmentDto
+        if (branches.Count() > 0)
         {
-            Id = d.Id,
-            Title =" شهر"+ d.Branch.City.Title + " واحد " + d.Department.Title + " شعبه " + d.Branch.Title,
-            DepartmentId = d.DepartmentId,
-            City = d.Branch.City.Title,
-            CityId = d.Branch.CityId,
-            BranchId = d.BranchId
-
-        }).AsNoTracking().ToListAsync();
 
 
-     
+            user.BranchDepartments = await context.BranchDepartments.AsExpandable()
+                .Where(predicate)
+                .Select(d => new BranchDepartmentDto
+                {
+                    Id = d.Id,
+                    Title = " شهر" + d.Branch.City.Title + " واحد " + d.Department.Title + " شعبه " + d.Branch.Title,
+                    DepartmentId = d.DepartmentId,
+                    City = d.Branch.City.Title,
+                    CityId = d.Branch.CityId,
+                    BranchId = d.BranchId
+
+                })
+                .AsNoTracking()
+                .ToListAsync();
+        }
+        
+
+
         return user;
     }
 

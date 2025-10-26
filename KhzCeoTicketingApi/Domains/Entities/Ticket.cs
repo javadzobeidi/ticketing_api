@@ -1,23 +1,40 @@
-﻿using KhzCeoTicketingApi.Domains.Enums;
+﻿using System.ComponentModel.DataAnnotations;
+using KhzCeoTicketingApi.Domains.Enums;
 
 namespace KhzCeoTicketingApi.Domains.Entities;
 
 public class Ticket
 {
-    public int Id { get; set; }
-    public string Subject { get; set; }
-    public string Content { get; set; }
+    
+    public long Id { set; get; }
+    public DateTime TicketDate { set; get; }
+    public string DateFa { set; get; }
+    public string TimeFa { set; get; }
+    
+    public long? UserId { set; get; }
+    public long? CurrentAssignmentUserId { set; get; }
+    public string? Description { set; get; }
+    public int DepartmentId { set; get; }
+    public int BranchId { set; get; }
+    public int CityId { set; get; }
+    
+    [Timestamp]
+    public byte[] RowVersion { get; set; }
+    
+    public Branch Branch { set; get; }
+    public Department Department { set; get; }
+    public City City { set; get; }
+    
+    public int TicketStatusId { get; set; }
 
-    public int CreatedByUserId { get; set; }
+    public Guid IdentityCode { set; get; }
 
-    // کاربر فعلی مسئول رسیدگی
-    public int? CurrentAssignedUserId { get; set; }
 
-    public TicketStatus Status { get; set; } = TicketStatus.Open;
+    public ICollection<TicketAssignment> TicketAssignments { set; get; } = new List<TicketAssignment>();
 
-    public DateTime CreatedAt { get; set; }
-    public DateTime? ClosedAt { get; set; }
-
-    public ICollection<TicketMessage> TicketMessages { get; set; } = new List<TicketMessage>();
-    public ICollection<TicketAssignmentHistory> AssignmentHistories { get; set; } = new List<TicketAssignmentHistory>();
+    public ICollection<TicketMessage> TicketMessages { set; get; } = new List<TicketMessage>();
+  
+    public virtual User? User { get; set; }  // The main user
+    public virtual User? CurrentAssignmentUser { get; set; }  // The
+    
 }

@@ -48,26 +48,32 @@ public sealed class LoginUserCommandHandler(
     IApplicationDbContext context,
     ILogger<RegisterUserCommand> _logger,
     IOptions<JwtConfig> persistenceOptions,
+    
     IWebHostEnvironment env) : IQueryHandler<LoginUserCommand, UserLoginTokenResponse>
 {
 
     public async ValueTask<UserLoginTokenResponse> Handle(LoginUserCommand command, CancellationToken cancellationToken)
     {
-       var user= context.Users.Where(d => d.NationalCode == command.userName).FirstOrDefault();
-       if (user == null)
-       {
-           throw new NotFoundException("نام کاربری و رمز عبور اشتباه است");
-       }
-        
-         
-       /*
-       if (PasswordHasher.ComputeHash(command.password, user.PasswordSalt, 3).CompareTo(user.Password) != 0)
-       {
-           throw new NotFoundException("نام کاربری و رمز عبور اشتباه است");
-       }
-       */
-       
-       var IdentityKey=  Guid.NewGuid();
+        var user = context.Users.Where(d => d.NationalCode == command.userName).FirstOrDefault();
+
+        if (user == null)
+        {
+            throw new NotFoundException("نام کاربری و رمز عبور اشتباه است");
+        }
+
+        if (!user.IsActive)
+            throw new Exception("کاربری شما غیر فعال است با واحد انفورماتیک در تماس باشید");
+
+        if (!env.IsDevelopment())
+        {
+        if (PasswordHasher.ComputeHash(command.password, user.PasswordSalt, 3).CompareTo(user.Password) != 0)
+        {
+            throw new NotFoundException("نام کاربری و رمز عبور اشتباه است");
+        }
+        }
+
+
+    var IdentityKey=  Guid.NewGuid();
 
        var claims = new List<Claim>
        {
