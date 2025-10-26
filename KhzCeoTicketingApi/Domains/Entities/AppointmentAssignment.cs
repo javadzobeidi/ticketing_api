@@ -9,7 +9,9 @@ public class AppointmentAssignment
     public long ToUserId { get; set; }
     public DateTime AssignedAt { get; set; }
     public string AssignDateFa { set; get; }
-    
+
+    public int StatusId { set; get; }
+
     public string? Note { get; set; }
 
     public Appointment Appointment { get; set; }

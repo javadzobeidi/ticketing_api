@@ -18,6 +18,7 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     public DbSet<Permission> Permissions { get; set; }
     public DbSet<RolePermission> RolePermissions { get; set; }
     
+    public DbSet<UserDepartment> UserDepartments => Set<UserDepartment>();
 
     public DbSet<Department> Departments => Set<Department>();
     public DbSet<BranchDepartment> BranchDepartments => Set<BranchDepartment>();

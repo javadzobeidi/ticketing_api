@@ -2,6 +2,7 @@ using KhzCeoTicketingApi.Application.Branches;
 using KhzCeoTicketingApi.Application.Contract;
 using Microsoft.AspNetCore.Mvc;
 using Application;
+using KhzCeoTicketingApi.Application.Departments;
 
 
 namespace KhzCeoTicketingApi.Controllers;
@@ -69,5 +70,13 @@ public class BranchController : ApiControllerBase
         var result = await Mediator.Send(query, cancellationToken);
         return Success(result);
     }
-
+    
+    [HttpGet]
+    [Route("users/{id}")]
+    public async Task<ActionResult<List<UserDepartmentItem>>> GetUsers(int id,CancellationToken cancellationToken)
+    {
+        var query = new GetUserDepartmentsIdQuery(id);
+        var result = await Mediator.Send(query, cancellationToken);
+        return Success(result);
+    }
 }

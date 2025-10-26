@@ -7,6 +7,7 @@ public enum AppointmentStatusEnum
 {
     NoReserver=1,
     Reserver=2,
-    Completed=3
+    Completed=3,
+    Referral=4
     
 }

@@ -40,12 +40,19 @@ public class AdminAppointmentController : ApiControllerBase
 
     [HttpPost]
     [Authorize]
-    [Route("detail/{id}")]
-    public async Task<ActionResult<BranchDto>> List(long id)
+    [Route("detail/{code}")]
+    public async Task<ActionResult<BranchDto>> List(Guid code)
     {
-        var result = await Mediator.Send(new GetAppointmentDetailsByManage(id));
+        var result = await Mediator.Send(new GetAppointmentDetailsByManage(code));
         return Success(result);
     }
 
-    
+    [HttpPost]
+    [Authorize]
+    [Route("complete")]
+    public async Task<ActionResult<BranchDto>> List(CompleteAppointmentCommand command)
+    {
+        var result = await Mediator.Send(command);
+        return Success(result);
+    }
 }

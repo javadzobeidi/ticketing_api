@@ -22,7 +22,8 @@ public sealed record GetAppointmentsByManager(string startDate,string endDate) :
 public record AppointmentListManagerItem
 {
     public string User { set; get; }
-    public long Id { set; get; }
+
+    public Guid Code { set; get; }
 
     public string Date { set; get; }
 
@@ -79,14 +80,14 @@ public sealed class GetAppointmentsByManagerHandler(
         
         DateTime startDate = request.startDate.ToDateTime();
         DateTime endDate = request.endDate.ToDateTime();
-        
-        var predicate = PredicateBuilder.New<Appointment>(false);
+        var predicate = PredicateBuilder.New<Appointment>(true);
+
         
         foreach (var filter in departments)
         {
             var localFilter = filter; 
     
-            predicate = predicate.Or(appt => 
+           predicate = predicate.Or(appt => 
                 appt.CityId == localFilter.CityId &&
                 appt.DepartmentId == localFilter.DepartmentId &&
                 appt.BranchId == localFilter.BranchId
@@ -96,18 +97,21 @@ public sealed class GetAppointmentsByManagerHandler(
 
         predicate = predicate.Or(d => d.CurrentAssignmentUserId == user.UserId);
         predicate = predicate.Or(d => d.AppointmentAssignments.Any(a => a.ToUserId == user.UserId));
-        predicate=   predicate.And(d=>d.AppointmentDate.Date>=startDate.Date && d.AppointmentDate.Date<=endDate.Date);
-        var appotinetms=context.Appoinments.AsExpandable().Where(predicate)
+       predicate=   predicate.And(d=>d.AppointmentDate.Date>=startDate.Date && d.AppointmentDate.Date<=endDate.Date);
+        var appotinetms=context.Appoinments
+            .OrderBy(d=>d.AppointmentDate)
+            .AsExpandable().Where(predicate)
             .Select(d => new AppointmentListManagerItem
             {
                 User = d.User != null ? d.User.FirstName + " " + d.User.LastName : "بدون کاربر",                
-               Date = d.DateFa,
-               Time = d.TimeFa,
-               Id = d.Id,
-               Branch = d.Branch.Title,
-               Department = d.Department.Title,
-               City=d.City.Title,
-               Status = d.AppointmentStatusDetails.Title,
+                Date = d.DateFa,
+                Time = d.TimeFa,
+                Code = d.IdentityCode,
+                Branch = d.Branch.Title,
+                Department = d.Department.Title,
+                City=d.City.Title,
+                Status = d.AppointmentStatusDetails.Title,
+                
                ResponseLastUser = d.CurrentAssignmentUser != null 
                    ? $"{d.CurrentAssignmentUser.FirstName} {d.CurrentAssignmentUser.LastName}" 
                    : "بدون پاسخ"

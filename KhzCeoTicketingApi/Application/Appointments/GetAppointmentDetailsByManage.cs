@@ -13,7 +13,7 @@ using Microsoft.EntityFrameworkCore;
 namespace KhzCeoTicketingApi.Application.Branches;
 
 
-public sealed record GetAppointmentDetailsByManage(long AppointmentId) : IQuery<AppointmentDetailsItem>
+public sealed record GetAppointmentDetailsByManage(Guid Code) : IQuery<AppointmentDetailsItem>
 {
     
     
@@ -23,10 +23,16 @@ public record AppointmentDetailsItem
 {
     public long Id { set; get; }
     public string Status { set; get; }
+
+    public bool CanProcess { set; get; }
+
+    public int StatusId { set; get; }
     public string Description { set; get; }
     public string Date { set; get; }
     public string Time { set; get; }
     public string User { set; get; }
+
+    public long? CurrentAssignUserId { set; get; }
 
     public List<AppointmentDetailsMessageItem> Messages { set; get; }
 }
@@ -69,35 +75,43 @@ public sealed class GetAppointmentDetailsByManageHandler(
         }).ToList();
 
         var query =  context.Appoinments
-            .Where(d => d.Id == request.AppointmentId && d.AppointmentStatusId!=(int)AppointmentStatusEnum.NoReserver).AsQueryable();
+            .Where(d => d.IdentityCode == request.Code && d.AppointmentStatusId!=(int)AppointmentStatusEnum.NoReserver).AsQueryable();
 
      var item=await   query.Select(d => new AppointmentDetailsItem
         {
+            Id=d.Id,
+            
           Description  = d.Description,
           Status=d.AppointmentStatusDetails.Title,
           Date = d.DateFa,
+          StatusId = d.AppointmentStatusId,
           Time = d.TimeFa,
           User= d.User.FirstName+" "+d.User.LastName,
-          
+          CurrentAssignUserId=d.CurrentAssignmentUserId,
        Messages=     d.AppointmentMessages.Select(ap => new AppointmentDetailsMessageItem
             {
                 User = ap.Sender.FirstName + " " + ap.Sender.LastName,
                 Message = ap.Message,
                 Date =ap.DateFa,
                 Time = ap.TimeFa
-
             }).ToList()
         }).FirstOrDefaultAsync(cancellationToken);
         
         
      if (item == null)
          throw new Exception("اطلاعات ارسالی اشتباه است");
-     
-     
-     
-        
-        
-        return item;
+
+
+     if (item.StatusId != (int)AppointmentStatusEnum.Completed)
+     {
+         if (item.StatusId == (int)AppointmentStatusEnum.Reserver
+             || (item.StatusId == (int)AppointmentStatusEnum.Referral && item.CurrentAssignUserId == user.UserId)
+             )
+             item.CanProcess = true;
+     }
+
+
+     return item;
 
     }
 }

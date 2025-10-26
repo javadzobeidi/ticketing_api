@@ -29,6 +29,7 @@
 
     <ItemGroup>
       <Folder Include="Application\Common\Constants\" />
+      <Folder Include="Application\UserDepartments\" />
     </ItemGroup>
 
 </Project>

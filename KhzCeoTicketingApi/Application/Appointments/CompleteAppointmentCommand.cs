@@ -14,7 +14,6 @@ namespace KhzCeoTicketingApi.Application.Branches;
 public sealed record CompleteAppointmentCommand : ICommand<bool>
 {
     public long AppointmentId { set; get; }
-
     public string Description { set; get; }
 
 }
@@ -36,23 +35,36 @@ public sealed class CompleteAppointmentCommandHandler(
     {
         try
         {
-           var userId= user.UserId;
-     
-    var entity=   await context.Appoinments.Where(d => d.Id == request.AppointmentId).FirstOrDefaultAsync();
+            var userId = user.UserId;
 
-    if (entity == null)
-        throw new Exception("اطلاعات ارسالی اشتباه است");
-    if (entity.CurrentAssignmentUserId.HasValue && userId != entity.CurrentAssignmentUserId)
-        throw new Exception("شما امکان پاسخ به این جلسه را ندارید");
-    
+            var entity = await context.Appoinments.Where(d => d.Id == request.AppointmentId).FirstOrDefaultAsync();
 
-    if (entity.AppointmentStatusId==(int)AppointmentStatusEnum.Completed)
-        throw new Exception("قبلا پایان یافته است");
+            if (entity == null)
+                throw new Exception("اطلاعات ارسالی اشتباه است");
+            if (entity.CurrentAssignmentUserId.HasValue && userId != entity.CurrentAssignmentUserId)
+                throw new Exception("شما امکان پاسخ به این جلسه را ندارید");
 
-    if (entity.CurrentAssignmentUserId == null)
-        entity.CurrentAssignmentUserId = userId;
 
-    DateTime now=DateTime.Now;
+            if (entity.AppointmentStatusId == (int)AppointmentStatusEnum.Completed)
+                throw new Exception("قبلا پایان یافته است");
+
+            DateTime now=DateTime.Now;
+
+            if (entity.CurrentAssignmentUserId == null)
+            {
+                entity.AppointmentAssignments.Add(new AppointmentAssignment
+                {
+                    ToUserId = userId,
+                    AssignedAt = now,
+                    AssignDateFa = now.ToPersianDate(),
+                    Note = "",
+                    StatusId =(int) AppointmentStatusEnum.Completed
+                    
+                });
+                entity.CurrentAssignmentUserId = userId;
+            }
+
+            entity.AppointmentStatusId = (int)AppointmentStatusEnum.Completed;
     
     entity.AppointmentMessages.Add(new AppointmentMessage
     {

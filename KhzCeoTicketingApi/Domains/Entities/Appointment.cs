@@ -34,14 +34,16 @@ public class Appointment
         get => (AppointmentStatusEnum)AppointmentStatusId;
         set => AppointmentStatusId = (int)value;
     }
-    
-    
+
+    public Guid IdentityCode { set; get; }
+
     public virtual AppointmentStatus AppointmentStatusDetails { get; set; }
 
-    
-    
-    public ICollection<AppointmentAssignment> AppointmentAssignments { set; get; }
-  public ICollection<AppointmentMessage> AppointmentMessages { set; get; }
+
+
+    public ICollection<AppointmentAssignment> AppointmentAssignments { set; get; } = new List<AppointmentAssignment>();
+
+    public ICollection<AppointmentMessage> AppointmentMessages { set; get; } = new List<AppointmentMessage>();
   
   public virtual User? User { get; set; }  // The main user
   public virtual User? CurrentAssignmentUser { get; set; }  // The
