@@ -21,7 +21,7 @@ public record AppointmentListUserItem
     public long Id { set; get; }
 
     public string Date { set; get; }
-
+    public Guid Code { set; get; }
     public string Time { set; get; }
 
     public string Status { set; get; }
@@ -68,6 +68,7 @@ public sealed class GetAppointmentsByUserHandler(
                Id = d.Id,
                Branch = d.Branch.Title,
                Department = d.Department.Title,
+               Code=d.IdentityCode,
                Status = d.AppointmentStatusDetails.Title,
                ResponseLastUser = d.CurrentAssignmentUser != null 
                    ? $"{d.CurrentAssignmentUser.FirstName} {d.CurrentAssignmentUser.LastName}" 

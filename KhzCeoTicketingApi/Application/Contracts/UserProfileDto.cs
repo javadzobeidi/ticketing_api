@@ -17,6 +17,7 @@ public class UserProfileDto
 
     public Guid Identity { set; get; }
     public List<UserDepartmentDto> UserDepartments { set; get; }=new List<UserDepartmentDto>();
+    public List<BranchDepartmentDto> BranchDepartments { set; get; }=new List<BranchDepartmentDto>();
 
     public List<String> Permissions { set; get; }=new List<string>();
 

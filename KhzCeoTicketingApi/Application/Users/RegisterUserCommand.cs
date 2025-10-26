@@ -74,6 +74,9 @@ public sealed class RegisterUserCommandHandler : ICommandHandler<RegisterUserCom
         {
         }
 
+       var role=await _context.Roles.Where(d => d.Id == (int)RoleEnum.User).FirstOrDefaultAsync();
+        
+        
        var city=await _context.Cities.Where(d => d.Id == command.CityId).FirstOrDefaultAsync();
        if (city == null)
            throw new Exception("شهر انتخاب شده یافت نشده است");
@@ -93,10 +96,7 @@ public sealed class RegisterUserCommandHandler : ICommandHandler<RegisterUserCom
       user.CityId =command.CityId;
      user.Mobile = command.Mobile;
      user.City = city;
-     user.Roles.Add(new Role
-     {
-         Id = (int)RoleEnum.User
-     });
+     user.Roles.Add(role);
      
      user.PasswordSalt = PasswordHasher.GenerateSalt();
      user.Password = PasswordHasher.ComputeHash(command.Password, user.PasswordSalt, 3);

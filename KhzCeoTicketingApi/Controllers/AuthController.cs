@@ -56,7 +56,7 @@ public class AuthController:ApiControllerBase
         
         if (_env.IsProduction())
         {
-            cookieOptions.Domain = ".khzceo.ir";
+            cookieOptions.Domain = ".aspms.ir";
         }
         Response.Cookies.Append("khzco", user.Token, cookieOptions);
 

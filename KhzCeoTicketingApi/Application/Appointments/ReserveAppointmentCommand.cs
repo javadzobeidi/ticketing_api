@@ -20,10 +20,14 @@ public sealed record ReserveAppointmentCommand : ICommand<bool>
 }
 
 
-public sealed class ReserveAppointmentCommandValidation : AbstractValidator<CreateBranchCommand>
+public sealed class ReserveAppointmentCommandValidation : AbstractValidator<ReserveAppointmentCommand>
 {
     public ReserveAppointmentCommandValidation()
-    {
+    { 
+        RuleFor(x => x.Description)
+        .NotEmpty().WithMessage("علت حضور را وارد کنید ")
+        .MaximumLength(500).WithMessage("علت حضور بیش از حد مجاز است");
+        
      }
 }
 

@@ -67,7 +67,7 @@ builder.Services.AddCors(options =>
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials()
-            .WithOrigins("http://localhost:5173")
+            .WithOrigins("http://localhost:5173","https://ticket.aspms.ir")
           
     );
 

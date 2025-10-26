@@ -42,7 +42,7 @@ public sealed class GetUsersQueryHandler(IApplicationDbContext context,
         var user = await query.Select(u => new UserProfileDto
             {
                 UserId = u.UserId,
-                
+                IsActive = u.IsActive,
                 FirstName = u.FirstName,
                 LastName = u.LastName,
                 NationalCode = u.NationalCode,

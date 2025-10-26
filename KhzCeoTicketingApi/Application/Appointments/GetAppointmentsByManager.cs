@@ -31,7 +31,7 @@ public record AppointmentListManagerItem
     public string City { set; get; }
 
     public string Status { set; get; }
-
+    public int StatusId { set; get; }
     public string ResponseLastUser { set; get; }
     public string Branch { set; get; }
 
@@ -111,7 +111,7 @@ public sealed class GetAppointmentsByManagerHandler(
                 Department = d.Department.Title,
                 City=d.City.Title,
                 Status = d.AppointmentStatusDetails.Title,
-                
+                StatusId = d.AppointmentStatusId,
                ResponseLastUser = d.CurrentAssignmentUser != null 
                    ? $"{d.CurrentAssignmentUser.FirstName} {d.CurrentAssignmentUser.LastName}" 
                    : "بدون پاسخ"

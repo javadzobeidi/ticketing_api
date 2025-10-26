@@ -55,4 +55,14 @@ public class AdminAppointmentController : ApiControllerBase
         var result = await Mediator.Send(command);
         return Success(result);
     }
+    
+    [HttpPost]
+    [Authorize]
+    [Route("referral")]
+    public async Task<ActionResult<BranchDto>> List(ReferralAppointmentCommand command)
+    {
+        var result = await Mediator.Send(command);
+        return Success(result);
+    }
+    
 }

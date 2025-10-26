@@ -46,4 +46,13 @@ public class AppointmentController : ApiControllerBase
         return Success(result);
     }
     
+    [HttpGet]
+    [Authorize]
+    [Route("conversations/{code}")]
+    public async Task<ActionResult<BranchDto>> GetConversations(Guid code)
+    {
+        var result = await Mediator.Send(new GetAppointmentConversations(code));
+        return Success(result);
+    }
+    
 }

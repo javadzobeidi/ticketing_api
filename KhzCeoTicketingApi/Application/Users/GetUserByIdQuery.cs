@@ -9,6 +9,7 @@ using System.Net;
 using KhzCeoTicketingApi.Application.Common.Interfaces;
 using KhzCeoTicketingApi.Application.Contract;
 using KhzCeoTicketingApi.Domains.Entities;
+using LinqKit;
 using Microsoft.AspNetCore.Identity;
 
 namespace KhzCeoTicketingApi.Application.Users;
@@ -47,6 +48,40 @@ public sealed class GetUserByIdQueryHandler(IApplicationDbContext context,
             BranchId = d.BranchId
         }).ToList()
         }).FirstOrDefaultAsync(cancellationToken);
+
+        var predicate = PredicateBuilder.New<BranchDepartment>(true);
+       
+        var branches= user.UserDepartments.Select(d => new
+        {
+            d.BranchId,
+            d.CityId,
+            d.DepartmentId
+        }).ToList();
+        foreach (var filter in branches)
+        {
+            var localFilter = filter; 
+    
+            predicate = predicate.Or(appt => 
+                appt.Branch.CityId == localFilter.CityId &&
+                appt.DepartmentId == localFilter.DepartmentId &&
+                appt.BranchId == localFilter.BranchId
+            );
+        }
+
+
+        user.BranchDepartments=await context.BranchDepartments.AsExpandable().Where(predicate).Select(d => new BranchDepartmentDto
+        {
+            Id = d.Id,
+            Title =" شهر"+ d.Branch.City.Title + " واحد " + d.Department.Title + " شعبه " + d.Branch.Title,
+            DepartmentId = d.DepartmentId,
+            City = d.Branch.City.Title,
+            CityId = d.Branch.CityId,
+            BranchId = d.BranchId
+
+        }).AsNoTracking().ToListAsync();
+
+
+     
         return user;
     }
 
