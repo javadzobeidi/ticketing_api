@@ -60,10 +60,12 @@ public sealed class LoginUserCommandHandler(
        }
         
          
+       /*
        if (PasswordHasher.ComputeHash(command.password, user.PasswordSalt, 3).CompareTo(user.Password) != 0)
        {
            throw new NotFoundException("نام کاربری و رمز عبور اشتباه است");
        }
+       */
        
        var IdentityKey=  Guid.NewGuid();
 
