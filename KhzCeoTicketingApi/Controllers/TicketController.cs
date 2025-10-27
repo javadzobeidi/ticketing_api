@@ -29,7 +29,7 @@ public class TicketController : ApiControllerBase
     [HttpPost]
     [Authorize]
     [Route("list")]
-    public async Task<ActionResult<BranchDto>> List(GetAppointmentsByUser request)
+    public async Task<ActionResult<BranchDto>> List(GetTicketsListbyUser request)
     {
         var result = await Mediator.Send(request);
         return Success(result);
@@ -42,6 +42,16 @@ public class TicketController : ApiControllerBase
     {
         var result = await Mediator.Send(new GetAppointmentConversations(code));
         return Success(result);
+    }
+    
+    [HttpPost]
+    [Authorize]
+    [Route("sendmessage")]
+    public async Task<IActionResult> List(SendTicketUserMessageCommand command)
+    {
+        var result = await Mediator.Send(command);
+        return Success(result);
+        
     }
     
 }

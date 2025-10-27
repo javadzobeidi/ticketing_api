@@ -21,6 +21,8 @@ public sealed record GetTicketDetailsByManage(Guid Code) : IQuery<TicketDetailsI
 
 public record TicketDetailsItem
 {
+    public Guid Code { set; get; }
+
     public long Id { set; get; }
     public string Status { set; get; }
 
@@ -34,6 +36,7 @@ public record TicketDetailsItem
 
     public long? CurrentAssignUserId { set; get; }
 
+
     public List<TicketDetailsMessageItem> Messages { set; get; }
 }
 
@@ -45,7 +48,18 @@ public record TicketDetailsMessageItem
     public string User { set; get; }
     public string Date { set; get; }
     public string Time { set; get; }
+
+    public bool IsFromStuff { set; get; }
     
+
+    public AttachmentItem? Attachment { set; get; }
+}
+
+public record AttachmentItem
+{
+    public string FileName { set; get; }
+
+    public string Url { set; get; }
 }
 
 public sealed class GetTicketDetailsByManageValidation : AbstractValidator<GetTicketDetailsByManage>
@@ -78,7 +92,7 @@ public sealed class GetTicketDetailsByManageHandler(
      var item=await   query.Select(d => new TicketDetailsItem
         {
             Id=d.Id,
-            
+            Code=d.IdentityCode,
           Description  = d.Description,
           Status=d.TicketStatus.Title,
           Date = d.DateFa,
@@ -91,7 +105,15 @@ public sealed class GetTicketDetailsByManageHandler(
                 User = ap.Sender.FirstName + " " + ap.Sender.LastName,
                 Message = ap.Message,
                 Date =ap.DateFa,
-                Time = ap.TimeFa
+                Time = ap.TimeFa,
+                IsFromStuff=ap.IsFromStaff,
+                Attachment = ap.AttachmentId.HasValue?new AttachmentItem
+                {
+                    FileName = ap.Attachment.FileName,
+                    Url = ap.AttachmentFileName
+                    
+                }:null
+                    
             }).ToList()
         }).FirstOrDefaultAsync(cancellationToken);
         

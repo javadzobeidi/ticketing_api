@@ -17,7 +17,7 @@ public class TicketMessage
     public string AttachmentFileName { set; get; }
     public long? AttachmentId { set; get; }
     
-    public Attachment Attachment { get; set; } = null!;
+    public Attachment? Attachment { get; set; } = null!;
     
 
 }

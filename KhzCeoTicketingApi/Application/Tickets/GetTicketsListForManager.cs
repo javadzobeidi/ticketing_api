@@ -113,8 +113,8 @@ public sealed class GetTicketsListForManagerHandler(
                 City=d.City.Title,
                 Status = d.TicketStatus.Title,
                 StatusId = d.TicketStatusId,
-               ResponseLastUser = d.CurrentAssignmentUser != null 
-                   ? $"{d.CurrentAssignmentUser.FirstName} {d.CurrentAssignmentUser.LastName}" 
+               ResponseLastUser = d.LastResponderUser != null 
+                   ? $"{d.LastResponderUser.FirstName} {d.LastResponderUser.LastName}" 
                    : "بدون پاسخ"
                
             })

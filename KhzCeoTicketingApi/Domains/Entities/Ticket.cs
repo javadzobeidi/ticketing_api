@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using KhzCeoTicketingApi.Domains.Enums;
 
 namespace KhzCeoTicketingApi.Domains.Entities;
@@ -37,5 +38,11 @@ public class Ticket
   
     public virtual User? User { get; set; }  // The main user
     public virtual User? CurrentAssignmentUser { get; set; }  // The
+
+
+    public long? LastResponderId { set; get; }
     
+    [ForeignKey(nameof(LastResponderId))]
+    public virtual User? LastResponderUser { get; set; }  // The
+
 }

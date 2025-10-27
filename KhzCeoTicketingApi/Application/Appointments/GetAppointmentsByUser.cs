@@ -52,12 +52,20 @@ public sealed class GetAppointmentsByUserHandler(
     public async ValueTask<List<AppointmentListUserItem>> Handle(GetAppointmentsByUser request, CancellationToken cancellationToken)
     {
 
-        DateTime startDate = request.startDate.ToDateTime();
-        DateTime endDate = request.endDate.ToDateTime();
+       
 
        var userId= user.UserId;
-       var query = context.Appoinments.Where(d => d.UserId == userId &&
-                                                  d.AppointmentDate.Date>=startDate.Date && d.AppointmentDate.Date<=endDate.Date);
+       var query = context.Appoinments.Where(d => d.UserId == userId);
+
+       if (!string.IsNullOrEmpty(request.startDate) && !string.IsNullOrEmpty(request.endDate))
+       {
+           DateTime startDate = request.startDate.ToDateTime();
+           DateTime endDate = request.endDate.ToDateTime();
+           query = query.Where(d => d.AppointmentDate.Date >= startDate.Date && d.AppointmentDate.Date <= endDate.Date);
+           
+       }
+          
+                                        
        
         
         var appotinetms=query

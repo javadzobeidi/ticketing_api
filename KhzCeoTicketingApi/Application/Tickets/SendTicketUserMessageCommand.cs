@@ -12,7 +12,7 @@ using KhzCeoTicketingApi.Domains.Enums;
 
 namespace KhzCeoTicketingApi.Application.Branches;
 
-public sealed record SendTicketMessageCommand : ICommand<bool>
+public sealed record SendTicketUserMessageCommand : ICommand<bool>
 {
     public Guid Code { set; get; }
     public string Message { set; get; }
@@ -21,9 +21,9 @@ public sealed record SendTicketMessageCommand : ICommand<bool>
 }
 
 
-public sealed class SendTicketMessageCommandValidation : AbstractValidator<SendTicketMessageCommand>
+public sealed class SendTicketUserMessageCommandValidation : AbstractValidator<SendTicketUserMessageCommand>
 {
-    public SendTicketMessageCommandValidation()
+    public SendTicketUserMessageCommandValidation()
     { 
         RuleFor(x => x.Message)
         .NotEmpty().WithMessage("متن پیام را وارد کنید ")
@@ -36,27 +36,21 @@ public sealed class SendTicketMessageCommandValidation : AbstractValidator<SendT
 }
 
 
-public sealed class SendTicketMessageCommandHandler(
+public sealed class SendTicketUserMessageCommandHandler(
     IApplicationDbContext context,IUser user,IMediator mediator) 
-    : ICommandHandler<SendTicketMessageCommand, bool>
+    : ICommandHandler<SendTicketUserMessageCommand, bool>
 {
-    public async ValueTask<bool> Handle(SendTicketMessageCommand request, CancellationToken cancellationToken)
+    public async ValueTask<bool> Handle(SendTicketUserMessageCommand request, CancellationToken cancellationToken)
     {
         var userId= user.UserId;
 
         
-      var ticket= await context.Tickets.Where(d => d.IdentityCode == request.Code).FirstOrDefaultAsync();
+      var ticket= await context.Tickets.Where(d =>d.UserId==user.UserId && d.IdentityCode == request.Code).FirstOrDefaultAsync();
       if (ticket == null)
           throw new NotFoundException("اطلاعات تیکت یافت نشد");
 
-      if (ticket.CurrentAssignmentUserId.HasValue && ticket.CurrentAssignmentUserId != user.UserId)
-          throw new Exception("امکان ارسال پیام نمی باشد");
-
-      if (ticket.CurrentAssignmentUserId.GetValueOrDefault() <= 0)
-          ticket.CurrentAssignmentUserId = userId;
-
       ticket.LastResponderId = user.UserId;
-      ticket.TicketStatusId = (int)TicketStatusEnum.AnsweredByStaff;
+      ticket.TicketStatusId = (int)TicketStatusEnum.AnsweredByUser;
         DateTime now=DateTime.Now;
         
            TicketMessage message=new TicketMessage();
@@ -64,7 +58,7 @@ public sealed class SendTicketMessageCommandHandler(
            message.SentAt = now;
            message.DateFa = now.ToPersianDate();
            message.TimeFa = now.ToTime();
-           message.IsFromStaff = true;
+           message.IsFromStaff = false;
            message.Message=request.Message;
            message.SenderId = userId;
            
