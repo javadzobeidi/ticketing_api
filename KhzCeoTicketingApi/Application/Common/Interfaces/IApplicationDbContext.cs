@@ -14,6 +14,9 @@ public interface IApplicationDbContext
     DbSet<Role> Roles { get; }
     DbSet<Appointment> Appoinments { get; }
     DbSet<Ticket> Tickets { get; }
+    DbSet<TicketStatus> TicketStatus { get; }
+
+    DbSet<Attachment> Attachments { get; }
 
     DbSet<Department> Departments { get; }
     DbSet<Permission> Permissions { get; }

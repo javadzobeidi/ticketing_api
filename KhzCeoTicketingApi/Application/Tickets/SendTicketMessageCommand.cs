@@ -12,18 +12,18 @@ using KhzCeoTicketingApi.Domains.Enums;
 
 namespace KhzCeoTicketingApi.Application.Branches;
 
-public sealed record CreateTicketCommand : ICommand<bool>
+public sealed record SendTicketMessageCommand : ICommand<bool>
 {
-    public long BranchDepartmentId { set; get; }
+    public Guid Code { set; get; }
     public string Message { set; get; }
     public IFormFile? Attachment { set; get; }
 
 }
 
 
-public sealed class CreateTicketCommandValidation : AbstractValidator<CreateTicketCommand>
+public sealed class SendTicketMessageCommandValidation : AbstractValidator<SendTicketMessageCommand>
 {
-    public CreateTicketCommandValidation()
+    public SendTicketMessageCommandValidation()
     { 
         RuleFor(x => x.Message)
         .NotEmpty().WithMessage("متن پیام را وارد کنید ")
@@ -36,43 +36,39 @@ public sealed class CreateTicketCommandValidation : AbstractValidator<CreateTick
 }
 
 
-public sealed class CreateTicketCommandHandler(
+public sealed class SendTicketMessageCommandHandler(
     IApplicationDbContext context,IUser user,IMediator mediator) 
-    : ICommandHandler<CreateTicketCommand, bool>
+    : ICommandHandler<SendTicketMessageCommand, bool>
 {
-    public async ValueTask<bool> Handle(CreateTicketCommand request, CancellationToken cancellationToken)
+    public async ValueTask<bool> Handle(SendTicketMessageCommand request, CancellationToken cancellationToken)
     {
-       
-           var userId= user.UserId;
-        var branch=  await context.BranchDepartments.Include(d=>d.Branch).Where(d => d.Id == request.BranchDepartmentId).FirstOrDefaultAsync();
+        var userId= user.UserId;
 
-        if (branch == null)
-            throw new NotFoundException("اطلاعات شعبه یافت نشد");
+        
+      var ticket= await context.Tickets.Where(d => d.IdentityCode == request.Code).FirstOrDefaultAsync();
+      if (ticket == null)
+          throw new NotFoundException("اطلاعات تیکت یافت نشد");
+
+      if (ticket.CurrentAssignmentUserId.HasValue && ticket.CurrentAssignmentUserId != user.UserId)
+          throw new Exception("امکان ارسال پیام نمی باشد");
+
+      if (ticket.CurrentAssignmentUserId.GetValueOrDefault() <= 0)
+          ticket.CurrentAssignmentUserId = userId;
+      
         DateTime now=DateTime.Now;
-           var entity = new Ticket();
-           entity.CityId = branch.Branch.CityId;
-           entity.BranchId=branch.BranchId;
-           entity.DepartmentId = branch.DepartmentId;
-           entity.Description = request.Message;
-           entity.UserId = userId;
-           entity.TicketDate = now;
-           entity.DateFa = now.ToPersianDate();
-           entity.TimeFa = now.ToTime();
-           entity.IdentityCode = Guid.NewGuid();
-           entity.TicketStatusId =(int) TicketStatusEnum.Open;
-           //////////////
+        
            TicketMessage message=new TicketMessage();
-           entity.TicketMessages.Add(message);
-           message.DateFa = entity.DateFa;
-           message.TimeFa = entity.TimeFa;
-           message.IsFromStaff = false;
-           message.Message=entity.Description;
+           ticket.TicketMessages.Add(message);
+           message.DateFa = now.ToPersianDate();
+           message.TimeFa = now.ToTime();
+           message.IsFromStaff = true;
+           message.Message=request.Message;
            message.SenderId = userId;
            
            if (request.Attachment != null)
            {
                    string fileName = $"{Guid.NewGuid()}_{Path.GetFileName(request.Attachment.FileName)}";
-                   string filePath = Path.Combine("Uploads", "Tickets", entity.IdentityCode.ToString());
+                   string filePath = Path.Combine("Uploads", "Tickets", ticket.IdentityCode.ToString());
                    Directory.CreateDirectory(filePath);
                    string fullPath = Path.Combine(filePath, fileName);
                    using (var stream = new FileStream(fullPath, FileMode.Create))
@@ -91,9 +87,6 @@ public sealed class CreateTicketCommandHandler(
                        UploadDate = now
                    };
            }
-
-           context.Tickets.Add(entity);
-
            await context.SaveChangesAsync(cancellationToken);
            return true;
       

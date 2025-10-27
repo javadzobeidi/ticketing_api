@@ -10,29 +10,18 @@ namespace KhzCeoTicketingApi.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class AppointmentController : ApiControllerBase
+public class TicketController : ApiControllerBase
 {
-    private readonly ILogger<AppointmentController> _logger;
+    private readonly ILogger<TicketController> _logger;
     
-    public AppointmentController(ILogger<AppointmentController> logger)
+    public TicketController(ILogger<TicketController> logger)
     {
         _logger = logger;
-    }
-    
- 
-    
-    [HttpPost]
-    [Authorize]
-    [Route("FreeList")]
-    public async Task<ActionResult<BranchDto>> FreeAppointmentList(GetFreeAppointmentsByBranch request)
-    {
-        var result = await Mediator.Send(request);
-        return Success(result);
     }
 
     [HttpPost]
     [Authorize]
-    public async Task<ActionResult<BranchDto>> ReserveAppointment(ReserveAppointmentCommand request)
+    public async Task<IActionResult> Create(CreateTicketCommand request)
     {
         var result = await Mediator.Send(request);
         return Success(result);
@@ -52,15 +41,6 @@ public class AppointmentController : ApiControllerBase
     public async Task<ActionResult<BranchDto>> GetConversations(Guid code)
     {
         var result = await Mediator.Send(new GetAppointmentConversations(code));
-        return Success(result);
-    }
-    
-    [HttpGet]
-    [Authorize]
-    [Route("cancel/{code}")]
-    public async Task<ActionResult<BranchDto>> CancelAppointment(Guid code)
-    {
-        var result = await Mediator.Send(new CancelAppointmentCommand(code));
         return Success(result);
     }
     

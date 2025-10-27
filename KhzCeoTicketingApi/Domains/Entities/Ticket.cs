@@ -30,6 +30,7 @@ public class Ticket
     public Guid IdentityCode { set; get; }
 
 
+    public TicketStatus TicketStatus { set; get; }
     public ICollection<TicketAssignment> TicketAssignments { set; get; } = new List<TicketAssignment>();
 
     public ICollection<TicketMessage> TicketMessages { set; get; } = new List<TicketMessage>();
