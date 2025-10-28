@@ -24,6 +24,7 @@ public record TicketListUserItem
 
     public Guid Code { set; get; }
     public string User { set; get; }
+    public string LastAssignmentUser { set; get; }
     public string Date { set; get; }
     public string Time { set; get; }
     public string City { set; get; }
@@ -60,11 +61,17 @@ public sealed class GetTicketsListbyUserHandler(
 
         if (request.Status > 0)
         {
-            /// پاسخ کارناش پاسخ کاربر و پاسخ  ارجاع اگر وضعیت تیک باز باشه میشه 
+            var openTicketsStatus = new List<int>{1, 2, 3, 5};
+            
+            
             if (request.Status==2)
-                predicate=   predicate.And(d=>d.TicketStatusId==2 || d.TicketStatusId==3 || d.TicketStatusId==5 );
+                predicate=   predicate.And(d=>openTicketsStatus.Contains( d.TicketStatusId) );
             else
-         predicate=   predicate.And(d=>d.TicketStatusId==request.Status );
+                predicate=   predicate.And(d=>d.TicketStatusId==(int)TicketStatusEnum.Closed );
+
+            
+           
+            
         }
 
        var lst= context.Tickets.ToList();
@@ -74,7 +81,8 @@ public sealed class GetTicketsListbyUserHandler(
             .AsExpandable().Where(predicate)
             .Select(d => new TicketListUserItem
             {
-                User = d.User != null ? d.User.FirstName + " " + d.User.LastName : "بدون کاربر",                
+                User = d.User != null ? d.User.FirstName + " " + d.User.LastName : "بدون کاربر",    
+                LastAssignmentUser=d.CurrentAssignmentUser!=null?d.CurrentAssignmentUser.FirstName+" "+d.CurrentAssignmentUser.LastName:"در انتظار کارشناس",
                 Date = d.DateFa,
                 Time = d.TimeFa,
                 Code = d.IdentityCode,

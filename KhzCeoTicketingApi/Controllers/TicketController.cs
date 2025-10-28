@@ -54,4 +54,22 @@ public class TicketController : ApiControllerBase
         
     }
     
+    [HttpPost]
+    [Authorize]
+    [Route("detail/{code}")]
+    public async Task<IActionResult> List(Guid code)
+    {
+        var result = await Mediator.Send(new GetTicketDetailsByUser(code));
+        return Success(result);
+    }
+    [HttpPost]
+    [Authorize]
+    [Route("close")]
+    public async Task<IActionResult> List(CloseTicketCommand command)
+    {
+        var result = await Mediator.Send(command);
+        return Success(result);
+    }
+
+    
 }

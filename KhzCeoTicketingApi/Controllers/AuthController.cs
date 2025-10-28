@@ -2,6 +2,7 @@ using KhzCeoTicketingApi.Application.Contract;
 using KhzCeoTicketingApi.Application.Users;
 using KhzCeoTicketingApi.Infrastructure.Data;
 using KhzCeoTicketingApi.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace KhzCeoTicketingApi.Controllers;
@@ -43,6 +44,40 @@ public class AuthController:ApiControllerBase
         
         return Success();
     }
+    
+    [HttpGet]
+    [Route("logout")]
+    [Authorize]
+    public async Task<ActionResult> Logout( )
+    {
+        if (_env.IsDevelopment() == true)
+        {
+        }
+        else
+        {
+          
+        }
+
+        var user = await Mediator.Send(new LogoutUserCommand());
+        
+        var cookieOptions = new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = true,
+            Path = "/",                                  // must match original
+            SameSite = SameSiteMode.Strict,
+            Expires = DateTimeOffset.UtcNow.AddDays(-1), // expired yesterday
+        };
+        if (_env.IsProduction())
+        {
+            cookieOptions.Domain = ".aspms.ir";
+        }
+     
+        Response.Cookies.Append("khzco", "", cookieOptions);
+
+        return Success();
+    }
+    
 
     public void GenerateCookie(UserLoginTokenResponse user)
     {

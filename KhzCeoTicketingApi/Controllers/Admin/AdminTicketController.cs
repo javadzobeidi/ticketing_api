@@ -49,4 +49,14 @@ public class AdminTicketController : ApiControllerBase
         return Success(result);
         
     }
+    
+    [HttpPost]
+    [Authorize]
+    [Route("referral")]
+    public async Task<ActionResult<BranchDto>> List(ReferralTicketCommand command)
+    {
+        var result = await Mediator.Send(command);
+        return Success(result);
+    }
+    
 }

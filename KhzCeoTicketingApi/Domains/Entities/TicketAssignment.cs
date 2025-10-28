@@ -4,7 +4,7 @@ namespace KhzCeoTicketingApi.Domains.Entities;
 public class TicketAssignment
 {
     public long Id { get; set; }
-    public long TicketAssignmentId { get; set; }
+    public long TicketId { get; set; }
     public long? FromUserId { get; set; }
     public long ToUserId { get; set; }
     public DateTime AssignedAt { get; set; }

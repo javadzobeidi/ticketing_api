@@ -26,6 +26,7 @@ public record TicketListItem
 
     public Guid Code { set; get; }
     public string User { set; get; }
+    public string LastAssignmentUser { set; get; }
     public string Date { set; get; }
     public string Time { set; get; }
     public string City { set; get; }
@@ -84,19 +85,28 @@ public sealed class GetTicketsListForManagerHandler(
         predicate = predicate.Or(d => d.CurrentAssignmentUserId == user.UserId);
         predicate = predicate.Or(d => d.TicketAssignments.Any(a => a.ToUserId == user.UserId));
 
-        if (string.IsNullOrEmpty(request.StartDate) && string.IsNullOrEmpty(request.EndDate))
-        {
-            DateTime startDate = request.StartDate.ToDateTime();
-            DateTime endDate = request.EndDate.ToDateTime();
-        //    predicate=   predicate.And(d=>d.TicketDate.Date>=startDate.Date && d.TicketDate.Date<=endDate.Date);
-
-        }
+    
 
         if (request.Status > 0)
         {
-       //     predicate=   predicate.And(d=>d.TicketStatusId==request.Status );
+            var openTicketsStatus = new List<int>{1, 2, 3, 5};
+            
+            
+            if (request.Status==2)
+                predicate=   predicate.And(d=>openTicketsStatus.Contains( d.TicketStatusId) );
+            else
+                predicate=   predicate.And(d=>d.TicketStatusId==(int)TicketStatusEnum.Closed );
+            
         }
 
+        if ( request.Status!=2 && !string.IsNullOrEmpty(request.StartDate) && !string.IsNullOrEmpty(request.EndDate))
+        {
+            DateTime startDate = request.StartDate.ToDateTime();
+            DateTime endDate = request.EndDate.ToDateTime();
+            predicate=   predicate.And(d=>d.TicketDate.Date>=startDate.Date && d.TicketDate.Date<=endDate.Date);
+
+        }
+        
        var lst= context.Tickets.ToList();
         
         var appotinetms=context.Tickets
@@ -104,7 +114,9 @@ public sealed class GetTicketsListForManagerHandler(
             .AsExpandable().Where(predicate)
             .Select(d => new TicketListItem
             {
-                User = d.User != null ? d.User.FirstName + " " + d.User.LastName : "بدون کاربر",                
+                User = d.User != null ? d.User.FirstName + " " + d.User.LastName : "بدون کاربر",
+                LastAssignmentUser=d.CurrentAssignmentUser!=null?d.CurrentAssignmentUser.FirstName+" "+d.CurrentAssignmentUser.LastName:"در انتظار کارشناس",
+
                 Date = d.DateFa,
                 Time = d.TimeFa,
                 Code = d.IdentityCode,
