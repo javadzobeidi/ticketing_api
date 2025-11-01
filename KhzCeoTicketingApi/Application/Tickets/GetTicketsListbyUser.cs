@@ -22,6 +22,8 @@ public sealed record GetTicketsListbyUser() : IQuery<List<TicketListUserItem>>
 public record TicketListUserItem
 {
 
+    public long Id { set; get; }
+
     public Guid Code { set; get; }
     public string User { set; get; }
     public string LastAssignmentUser { set; get; }
@@ -81,6 +83,7 @@ public sealed class GetTicketsListbyUserHandler(
             .AsExpandable().Where(predicate)
             .Select(d => new TicketListUserItem
             {
+                Id=d.Id,
                 User = d.User != null ? d.User.FirstName + " " + d.User.LastName : "بدون کاربر",    
                 LastAssignmentUser=d.CurrentAssignmentUser!=null?d.CurrentAssignmentUser.FirstName+" "+d.CurrentAssignmentUser.LastName:"در انتظار کارشناس",
                 Date = d.DateFa,
