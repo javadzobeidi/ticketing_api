@@ -19,7 +19,10 @@ public sealed record UpdateUserCommand : ICommand<UserDto>
     public int UserId { set; get; }
     public string FirstName { set; get; }
     public string LastName { set; get; }
+    public bool IsActive { set; get; }
+    public string Mobile { set; get; }
     public int  RoleId { set; get; }
+    public string? LocalNumber { set; get; }
     public List<int> BranchDepartments { set; get; } = new();
 
 }
@@ -104,6 +107,11 @@ public sealed class UpdateUserCommandHandler : ICommandHandler<UpdateUserCommand
 
         }
         
+        user.FirstName=command.FirstName;
+        user.LastName=command.LastName;
+        user.IsActive = command.IsActive;
+        user.Mobile = command.Mobile;
+        user.LocalNumber = command.LocalNumber;
          await _context.SaveChangesAsync(cancellationToken);
 
         return UserDto.From(user);

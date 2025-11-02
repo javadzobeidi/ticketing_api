@@ -16,6 +16,8 @@ public class User
     public string Mobile { set; get; }
     public int CityId { set; get; }
     public string Password { set; get; }
+    public string? LocalNumber { set; get; }
+    
     public string PasswordSalt { set; get; }
     public DateTimeOffset? LastLoginDateTime { set; get; }
     public City City { set; get; }

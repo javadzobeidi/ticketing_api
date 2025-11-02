@@ -10,6 +10,7 @@ public class UserProfileDto
     public string NationalCode { set; get; }
     public string Mobile { set; get; }
     public int CityId { set; get; }
+    public string LocalNumber { set; get; }
     public string City { set; get; }
     public bool IsActive { set; get; }
     public int RoleId { set; get; }
