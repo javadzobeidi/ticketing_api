@@ -50,9 +50,9 @@ public record TicketDetailsMessageItem
     public string Time { set; get; }
 
     public bool IsFromStuff { set; get; }
-    
 
-    public AttachmentItem? Attachment { set; get; }
+    public int MessageType { set; get; }
+    public List<AttachmentItem> Attachment { set; get; }
 }
 
 public record AttachmentItem
@@ -107,12 +107,13 @@ public sealed class GetTicketDetailsByManageHandler(
                 Date =ap.DateFa,
                 Time = ap.TimeFa,
                 IsFromStuff=ap.IsFromStaff,
-                Attachment = ap.AttachmentId.HasValue?new AttachmentItem
+                MessageType=ap.MessageTypeId,
+                Attachment =ap.TicketAttachments.Select(att=>new AttachmentItem 
                 {
-                    FileName = ap.Attachment.FileName,
-                    Url = ap.AttachmentFileName
-                    
-                }:null
+                    FileName = att.Attachment.FileName,
+                    Url = att.Attachment.FilePath
+ 
+                }).ToList()
                     
             }).ToList()
         }).FirstOrDefaultAsync(cancellationToken);

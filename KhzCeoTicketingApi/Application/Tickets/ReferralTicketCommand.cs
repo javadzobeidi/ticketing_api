@@ -81,6 +81,7 @@ public sealed class ReferralTicketCommandHandler(
         SentAt = now,
         TimeFa = now.ToTime(),
         DateFa = now.ToPersianDate(),
+        MessageTypeId = 1
     });
   
               await context.SaveChangesAsync(cancellationToken);

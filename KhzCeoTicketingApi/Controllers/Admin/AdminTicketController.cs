@@ -2,6 +2,7 @@ using KhzCeoTicketingApi.Application.Branches;
 using KhzCeoTicketingApi.Application.Contract;
 using Microsoft.AspNetCore.Mvc;
 using Application;
+using KhzCeoTicketingApi.Application.Users;
 using Microsoft.AspNetCore.Authorization;
 
 
@@ -58,5 +59,15 @@ public class AdminTicketController : ApiControllerBase
         var result = await Mediator.Send(command);
         return Success(result);
     }
+    
+    [HttpGet]
+    [Authorize]
+    [Route("dial/{Id}")]
+    public async Task<IActionResult> List(long Id)
+    {
+        var result = await Mediator.Send(new DialUserCommand(Id));
+        return Success(result);
+    }
+    
     
 }

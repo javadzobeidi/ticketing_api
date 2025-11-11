@@ -67,31 +67,34 @@ public sealed class SendTicketMessageCommandHandler(
            message.IsFromStaff = true;
            message.Message=request.Message;
            message.SenderId = userId;
-           
-           
-           
+           message.MessageTypeId = 1;
+
+
            if (request.Attachment != null)
            {
-                   string fileName = $"{Guid.NewGuid()}_{Path.GetFileName(request.Attachment.FileName)}";
-                   string filePath = Path.Combine("Uploads", "Tickets", ticket.IdentityCode.ToString());
-                   Directory.CreateDirectory(filePath);
-                   string fullPath = Path.Combine(filePath, fileName);
-                   using (var stream = new FileStream(fullPath, FileMode.Create))
-                   {
-                       await request.Attachment.CopyToAsync(stream);
-                   }
+               string fileName = $"{Guid.NewGuid()}_{Path.GetFileName(request.Attachment.FileName)}";
+               string filePath = Path.Combine("Uploads", "Tickets", ticket.IdentityCode.ToString());
+               Directory.CreateDirectory(filePath);
+               string fullPath = Path.Combine(filePath, fileName);
+               using (var stream = new FileStream(fullPath, FileMode.Create))
+               {
+                   await request.Attachment.CopyToAsync(stream);
+               }
 
-                   message.AttachmentFileName = fullPath;
-
-                   message.Attachment = new Attachment
+               message.TicketAttachments.Add(new TicketAttachment
+               {
+                   Attachment = new Attachment
                    {
                        FileName = request.Attachment.FileName,
                        FilePath = fullPath,
                        FileSize = request.Attachment.Length,
                        ContentType = request.Attachment.ContentType,
                        UploadDate = now
-                   };
+                   }
+               });
+
            }
+
            await context.SaveChangesAsync(cancellationToken);
            return true;
       

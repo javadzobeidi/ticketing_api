@@ -61,8 +61,7 @@ public sealed class SendTicketUserMessageCommandHandler(
            message.IsFromStaff = false;
            message.Message=request.Message;
            message.SenderId = userId;
-           
-           
+           message.MessageTypeId = 1;
            
            if (request.Attachment != null)
            {
@@ -75,16 +74,19 @@ public sealed class SendTicketUserMessageCommandHandler(
                        await request.Attachment.CopyToAsync(stream);
                    }
 
-                   message.AttachmentFileName = fullPath;
-
-                   message.Attachment = new Attachment
+                   message.TicketAttachments.Add(new TicketAttachment
                    {
-                       FileName = request.Attachment.FileName,
-                       FilePath = fullPath,
-                       FileSize = request.Attachment.Length,
-                       ContentType = request.Attachment.ContentType,
-                       UploadDate = now
-                   };
+                       Attachment = new Attachment
+                       {
+                           FileName = request.Attachment.FileName,
+                           FilePath = fullPath,
+                           FileSize = request.Attachment.Length,
+                           ContentType = request.Attachment.ContentType,
+                           UploadDate = now
+                       }
+                   });
+
+              
            }
            await context.SaveChangesAsync(cancellationToken);
            return true;

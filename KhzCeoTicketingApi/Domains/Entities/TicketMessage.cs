@@ -14,10 +14,9 @@ public class TicketMessage
     public string DateFa { set; get; }
     public string TimeFa { set; get; }
     public bool IsFromStaff { get; set; }
-    public string AttachmentFileName { set; get; }
-    public long? AttachmentId { set; get; }
+    public int MessageTypeId { set; get; }
     
-    public Attachment? Attachment { get; set; } = null!;
     
+    public List<TicketAttachment> TicketAttachments { get; set; } = new List<TicketAttachment>();
 
 }

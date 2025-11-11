@@ -60,6 +60,11 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
         builder.Entity<RolePermission>()
             .HasKey(rp => new { rp.RoleId, rp.PermissionId });
         
+             
+        builder.Entity<TicketAttachment>()
+            .HasKey(rp => new { rp.AttachmentId, rp.TicketMessageId });
+        
+        
         builder.Entity<RolePermission>()
             .HasOne(rp => rp.Role)
             .WithMany(r => r.RolePermissions)

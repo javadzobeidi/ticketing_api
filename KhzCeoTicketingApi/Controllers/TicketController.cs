@@ -2,6 +2,7 @@ using KhzCeoTicketingApi.Application.Branches;
 using KhzCeoTicketingApi.Application.Contract;
 using Microsoft.AspNetCore.Mvc;
 using Application;
+using KhzCeoTicketingApi.Application.Users;
 using Microsoft.AspNetCore.Authorization;
 
 
@@ -71,5 +72,5 @@ public class TicketController : ApiControllerBase
         return Success(result);
     }
 
-    
+ 
 }
