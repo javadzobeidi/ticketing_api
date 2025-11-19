@@ -20,7 +20,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers(options =>
 {
     options.Filters.Add<FarsiStringNormalizationFilter>();
-
 });
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -49,9 +48,12 @@ builder.Services.AddScoped<ICaptchaService, CaptchaService>();
 builder.Services.Configure<JwtConfig>(
     builder.Configuration.GetSection("JwtConfig"));
 
+builder.Services.Configure<SmsConfig>(
+    builder.Configuration.GetSection("SmsConfig"));
+
+
 
 builder.Services
-
     .AddScoped(typeof(IPipelineBehavior<,>), typeof(HandleExceptionBehavior<,>))
     //.AddSingleton(typeof(IPipelineBehavior<,>), typeof(ErrorLoggingBehaviour<,>))
     .AddSingleton(typeof(IPipelineBehavior<,>), typeof(MessageValidatorBehaviour<,>))
