@@ -34,17 +34,20 @@ public sealed class CancelAppointmentCommandHandler(
     {
        
             var userId = user.UserId;
-            var entity = await context.Appoinments.Where(d =>d.UserId==userId && d.IdentityCode == request.code).FirstOrDefaultAsync();
+            var entity = await context.Appoinments.Where(d => d.IdentityCode == request.code).FirstOrDefaultAsync();
             if (entity == null)
                 throw new Exception("اطلاعات ارسالی اشتباه است");
 
-            if (entity.AppointmentStatusId != (int)AppointmentStatusEnum.Reserver)
-                throw new Exception("در دستور کار قرار گرفته است امکان انصراف نمی باشد");
+            if (entity.CurrentAssignmentUserId.HasValue && userId != entity.CurrentAssignmentUserId)
+                throw new Exception("شما امکان تغییر وضعیت به این جلسه را ندارید");
+            
+            
 
             DateTime now=DateTime.Now;
-
             entity.AppointmentStatusId = (int)AppointmentStatusEnum.Cancelled;
-   
+            entity.CurrentAssignmentUserId = userId;
+            entity.Description = "عدم مراجعه کاربر";
+            
               await context.SaveChangesAsync(cancellationToken);
               return true;
        

@@ -70,7 +70,7 @@ public class AuthController:ApiControllerBase
         };
         if (_env.IsProduction())
         {
-            cookieOptions.Domain = ".aspms.ir";
+            cookieOptions.Domain = ".khzceo.ir";
         }
      
         Response.Cookies.Append("khzco", "", cookieOptions);
@@ -86,12 +86,13 @@ public class AuthController:ApiControllerBase
             HttpOnly = true,
             Secure = true,
             SameSite = SameSiteMode.Strict,
-            Expires = DateTime.Now.AddDays(1)
+            Expires = DateTime.Now.AddDays(10),
+            Path = "/"
         };
         
         if (_env.IsProduction())
         {
-            cookieOptions.Domain = ".aspms.ir";
+            cookieOptions.Domain = ".khzceo.ir";
         }
         Response.Cookies.Append("khzco", user.Token, cookieOptions);
 

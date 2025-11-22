@@ -1,10 +1,11 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Domain.Common;
 using KhzCeoTicketingApi.Domains.Enums;
 
 namespace KhzCeoTicketingApi.Domains.Entities;
 
-public class Appointment
+public class Appointment:BaseAuditableEntity
 {
     public long Id { set; get; }
     public DateTime AppointmentDate { set; get; }

@@ -1,5 +1,5 @@
 ﻿using System.Reflection;
-
+using Infrastructure.Data.Interceptors;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using KhzCeoTicketingApi.Application.Common.Interfaces;
@@ -8,7 +8,17 @@ namespace KhzCeoTicketingApi.Infrastructure.Data;
 
 public class ApplicationDbContext : DbContext, IApplicationDbContext
 {
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
+    private readonly AuditableEntityInterceptor _auditableInterceptor;
+
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options,
+        AuditableEntityInterceptor auditableInterceptor
+        ) : base(options)
+    {
+        
+        _auditableInterceptor = auditableInterceptor;
+
+        
+    }
    
     public DbSet<User> Users => Set<User>();
     public DbSet<City> Cities => Set<City>();
@@ -29,6 +39,11 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
 
     public DbSet<Appointment> Appoinments => Set<Appointment>();
 
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        optionsBuilder.AddInterceptors(_auditableInterceptor);
+    }
+    
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);

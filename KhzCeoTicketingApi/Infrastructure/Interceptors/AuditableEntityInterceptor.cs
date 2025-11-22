@@ -12,14 +12,12 @@ namespace Infrastructure.Data.Interceptors;
 public class AuditableEntityInterceptor : SaveChangesInterceptor
 {
     private readonly IUser _user;
-    private readonly TimeProvider _dateTime;
 
     public AuditableEntityInterceptor(
         IUser user,
         TimeProvider dateTime)
     {
         _user = user;
-        _dateTime = dateTime;
     }
 
     public override InterceptionResult<int> SavingChanges(DbContextEventData eventData, InterceptionResult<int> result)
@@ -40,19 +38,21 @@ public class AuditableEntityInterceptor : SaveChangesInterceptor
     public void UpdateEntities(DbContext? context)
     {
         if (context == null) return;
+      
+        DateTime now=DateTime.Now;
+        
 
         foreach (var entry in context.ChangeTracker.Entries<BaseAuditableEntity>())
         {
             if (entry.State is EntityState.Added or EntityState.Modified || entry.HasChangedOwnedEntities())
             {
-                var utcNow = _dateTime.GetUtcNow();
                 if (entry.State == EntityState.Added)
                 {
                     entry.Entity.CreatedBy = _user.UserId.ToString();
-                    entry.Entity.Created = utcNow;
+                    entry.Entity.Created = now;
                 } 
                 entry.Entity.LastModifiedBy = _user.UserId.ToString();
-                entry.Entity.LastModified = utcNow;
+                entry.Entity.LastModified = now;
             }
         }
     }

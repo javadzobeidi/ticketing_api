@@ -25,8 +25,15 @@ builder.Services.AddControllers(options =>
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
+builder.Services.AddScoped<AuditableEntityInterceptor>();
+
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+
+
+});
 
 builder.Services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
 builder.Services.AddScoped<ISaveChangesInterceptor, AuditableEntityInterceptor>();
@@ -69,7 +76,7 @@ builder.Services.AddCors(options =>
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials()
-            .WithOrigins("http://localhost:5173","https://ticket.aspms.ir")
+            .WithOrigins("http://localhost:5173","https://crm.khzceo.ir")
           
     );
 

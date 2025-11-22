@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Application;
 using Application.Common.Interfaces;
 using KhzCeoTicketingApi.Application.Users;
+using KhzCeoTicketingApi.Infrastructure.Data;
 using Microsoft.AspNetCore.Authorization;
 
 namespace KhzCeoTicketingApi.Controllers;
@@ -14,16 +15,30 @@ public class UserController : ApiControllerBase
 {
     private readonly ILogger<UserController> _logger;
     private readonly IUser _user;
-    public UserController(ILogger<UserController>  logger,IUser user)
+    private readonly ICaptchaService _captchaService;
+    private readonly IWebHostEnvironment _env;
+
+    public UserController(ILogger<UserController>  logger,IUser user,ICaptchaService captchaService,IWebHostEnvironment env)
     {
         _logger = logger;
         _user = user;
+        _captchaService = captchaService;
+        _env = env;
     }
 
     
     [HttpPost]
     public async Task<IActionResult> CreateUser(RegisterUserCommand command)
     {
+        if (_env.IsDevelopment())
+        {
+            if (!_captchaService.VerifyCaptcha(command.captcha_answer,command.captcha_token))
+            {
+                return Failure("مقدار کپچا درست نیست", null);
+            }
+        }
+   
+        
        var result=await Mediator.Send(command);
        return Success(result);
     }

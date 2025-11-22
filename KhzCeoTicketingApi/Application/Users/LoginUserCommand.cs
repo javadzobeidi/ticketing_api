@@ -66,10 +66,11 @@ public sealed class LoginUserCommandHandler(
 
         if (!env.IsDevelopment())
         {
-        /*if (PasswordHasher.ComputeHash(command.password, user.PasswordSalt, 3).CompareTo(user.Password) != 0)
+        if (PasswordHasher.ComputeHash(command.password, user.PasswordSalt, 3).CompareTo(user.Password) != 0)
         {
             throw new NotFoundException("نام کاربری و رمز عبور اشتباه است");
-        }*/
+        }
+        
         }
 
 

@@ -1,10 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Domain.Common;
 using KhzCeoTicketingApi.Domains.Enums;
 
 namespace KhzCeoTicketingApi.Domains.Entities;
 
-public class Ticket
+public class Ticket:BaseAuditableEntity
 {
     
     public long Id { set; get; }

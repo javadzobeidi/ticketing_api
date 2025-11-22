@@ -22,6 +22,10 @@ public sealed record RegisterUserCommand : ICommand<UserDto>
     public string Mobile { set; get; }
     public int CityId { set; get; }
     public string Password { set; get; }
+    
+    public string? captcha_answer { set; get; }
+    public string? captcha_token { set; get; }
+    
 }
 
 
@@ -82,10 +86,15 @@ public sealed class RegisterUserCommandHandler : ICommandHandler<RegisterUserCom
            throw new Exception("شهر انتخاب شده یافت نشده است");
 
         
-        var user = await _context.Users.Where(d => d.NationalCode.Equals(command.NationalCode)).FirstOrDefaultAsync();
-        
-        if (user != null) 
+        var user = await _context.Users.Where(d =>d.Mobile.Equals(command.Mobile) ||  d.NationalCode.Equals(command.NationalCode)).FirstOrDefaultAsync();
+
+        if (user != null)
+        {
+            if (user.Mobile.Equals(command.Mobile))
+                throw new Exception("موبایل قبلا ثبت شده است");
+                
             throw new Exception("کد ملی قبلا ثبت شده است");
+        }
 
             user = new User();
             _context.Users.Add(user);
