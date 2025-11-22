@@ -12,6 +12,7 @@ public class User
     public long UserId { get; set; }
     public string FirstName { set; get; }
     public string LastName { set; get; }
+    public string UserName { set; get; }
     public string NationalCode { set; get; }
     public string Mobile { set; get; }
     public int CityId { set; get; }

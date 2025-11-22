@@ -16,7 +16,7 @@ public sealed record CreateTicketCommand : ICommand<bool>
 {
     public long BranchDepartmentId { set; get; }
     public string Message { set; get; }
-    public List<IFormFile> Attachments { set; get; }
+    public List<IFormFile>? Attachments { set; get; } = new List<IFormFile>();
 
 }
 
@@ -29,8 +29,8 @@ public sealed class CreateTicketCommandValidation : AbstractValidator<CreateTick
         .NotEmpty().WithMessage("متن پیام را وارد کنید ")
         .MaximumLength(500).WithMessage("متن پیام بیش از حد مجاز است");
         
-        /*RuleFor(x => x.Attachment)
-            .SetValidator(new FileValidator()); */
+        RuleForEach(x => x.Attachments)
+            .SetValidator(new FileValidator()); 
         
      }
 }

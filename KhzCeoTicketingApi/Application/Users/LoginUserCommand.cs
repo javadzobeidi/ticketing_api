@@ -11,6 +11,7 @@ using System.Security.Claims;
 using System.Text;
 using KhzCeoTicketingApi.Application.Common.Interfaces;
 using KhzCeoTicketingApi.Application.Contract;
+using KhzCeoTicketingApi.Application.Services;
 using KhzCeoTicketingApi.Domains.Entities;
 using KhzCeoTicketingApi.Models;
 using Microsoft.AspNetCore.Identity;
@@ -54,7 +55,7 @@ public sealed class LoginUserCommandHandler(
 
     public async ValueTask<UserLoginTokenResponse> Handle(LoginUserCommand command, CancellationToken cancellationToken)
     {
-        var user = context.Users.Where(d => d.NationalCode == command.userName).FirstOrDefault();
+        var user = context.Users.Where(d => d.UserName == command.userName).FirstOrDefault();
 
         if (user == null)
         {
@@ -75,23 +76,26 @@ public sealed class LoginUserCommandHandler(
 
 
     var IdentityKey=  Guid.NewGuid();
-
        var claims = new List<Claim>
        {
            new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
            new Claim(JwtRegisteredClaimNames.Jti, IdentityKey.ToString()),
-
        };
        var claimsIdentity = new ClaimsIdentity(claims, "Cookies");
        var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
 
        UserLoginTokenResponse userToken = new UserLoginTokenResponse();
        
-       var jwt = GenerateJwtToken(claims);
+       var jwt = JwtToken.GenerateJwtToken(
+           claims,
+           persistenceOptions.Value.Key,
+           persistenceOptions.Value.Issuer,
+           persistenceOptions.Value.Audience
+       );
+       
        userToken.UserId=user.UserId;
        userToken.Token=jwt;
-       
-       
+       user.LastLoginDateTime = DateTime.Now;
        user.IdentityKey = IdentityKey;
 
        await context.SaveChangesAsync(cancellationToken);
@@ -99,21 +103,7 @@ public sealed class LoginUserCommandHandler(
        
     }
     
-    private string GenerateJwtToken(List<Claim> claims)
-    {
-        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(persistenceOptions.Value.Key));
-        var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-
-        var token = new JwtSecurityToken(
-            issuer: persistenceOptions.Value.Issuer,
-            audience: persistenceOptions.Value.Audience,
-            claims: claims,
-            expires: DateTime.UtcNow.AddHours(3),
-            signingCredentials: credentials);
-
-        return new JwtSecurityTokenHandler().WriteToken(token);
-    }
-    
+  
 
 }
     

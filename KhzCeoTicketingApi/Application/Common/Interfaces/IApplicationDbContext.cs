@@ -9,6 +9,8 @@ namespace KhzCeoTicketingApi.Application.Common.Interfaces;
 
 public interface IApplicationDbContext
 {
+    DbSet<OtpSms> OtpSms { get; }
+
     DbSet<User> Users { get; }
     DbSet<City> Cities { get; }
     DbSet<Role> Roles { get; }

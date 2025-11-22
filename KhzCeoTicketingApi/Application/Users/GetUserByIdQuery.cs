@@ -28,6 +28,7 @@ public sealed class GetUserByIdQueryHandler(IApplicationDbContext context,
      var user= await  context.Users.Where(d=>d.UserId==command.userId).Select(u=>new UserProfileDto
         {
             UserId=u.UserId,
+            UserName = u.UserName,
           FirstName  = u.FirstName,
           LastName  = u.LastName,
           NationalCode  = u.NationalCode,

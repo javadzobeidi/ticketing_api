@@ -3,6 +3,7 @@ using Application;
 using Application.Common.Interfaces;
 using KhzCeoTicketingApi.Application.Users;
 using KhzCeoTicketingApi.Infrastructure.Data;
+using KhzCeoTicketingApi.Infrastructure.Data.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 
 namespace KhzCeoTicketingApi.Controllers;
@@ -17,13 +18,14 @@ public class UserController : ApiControllerBase
     private readonly IUser _user;
     private readonly ICaptchaService _captchaService;
     private readonly IWebHostEnvironment _env;
-
-    public UserController(ILogger<UserController>  logger,IUser user,ICaptchaService captchaService,IWebHostEnvironment env)
+    private readonly ISmsService _smsService;
+    public UserController(ILogger<UserController>  logger,IUser user,ICaptchaService captchaService,IWebHostEnvironment env,ISmsService smsService)
     {
         _logger = logger;
         _user = user;
         _captchaService = captchaService;
         _env = env;
+        _smsService = smsService;
     }
 
     
@@ -53,6 +55,24 @@ public class UserController : ApiControllerBase
         return Success(result);
         
     }
+
+    [Route("send")]
+    public async Task<IActionResult> SendSms()
+    {
+        var model = new SendOtpCommand()
+        {
+            Mobile = "09300560248",
+            captcha_answer = "asdasd",
+            captcha_token = "asdasd"
+        };
+        
+   var result=   await  Mediator.Send(model);
    
-   
+        
+
+        return Success(result);
+        
+
+
+    }
 }

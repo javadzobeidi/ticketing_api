@@ -5,6 +5,7 @@ namespace KhzCeoTicketingApi.Application.Contract;
 public class UserProfileDto
 {
     public long UserId { set; get; }
+    public string UserName { set; get; }
     public string FirstName { set; get; }
     public string LastName { set; get; }
     public string NationalCode { set; get; }

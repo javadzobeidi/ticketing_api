@@ -19,7 +19,8 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
 
         
     }
-   
+    public DbSet<OtpSms> OtpSms => Set<OtpSms>();
+
     public DbSet<User> Users => Set<User>();
     public DbSet<City> Cities => Set<City>();
     public DbSet<Branch> Branches => Set<Branch>();

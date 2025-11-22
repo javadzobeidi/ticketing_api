@@ -2,6 +2,7 @@ using System.Reflection;
 using Application.Common.Behaviours;
 using Application.Common.Interfaces;
 using FluentValidation;
+using Hangfire;
 using Infrastructure.Data.Interceptors;
 using Infrastructure.Services;
 using KhzCeoTicketingApi;
@@ -9,6 +10,7 @@ using KhzCeoTicketingApi.Application.Common.Interfaces;
 using KhzCeoTicketingApi.Application.Contract;
 using KhzCeoTicketingApi.Filters;
 using KhzCeoTicketingApi.Infrastructure.Data;
+using KhzCeoTicketingApi.Infrastructure.Data.Interfaces;
 using KhzCeoTicketingApi.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -35,6 +37,13 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 });
 
+builder.Services.AddHangfire(config => config
+    .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+    .UseSimpleAssemblyNameTypeSerializer()
+    .UseRecommendedSerializerSettings()
+    .UseSqlServerStorage(builder.Configuration.GetConnectionString("HangfireConnection")));
+    builder.Services.AddHangfireServer();
+
 builder.Services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
 builder.Services.AddScoped<ISaveChangesInterceptor, AuditableEntityInterceptor>();
 builder.Services.AddScoped<ISaveChangesInterceptor, DispatchDomainEventsInterceptor>();
@@ -57,6 +66,9 @@ builder.Services.Configure<JwtConfig>(
 
 builder.Services.Configure<SmsConfig>(
     builder.Configuration.GetSection("SmsConfig"));
+
+builder.Services.AddScoped<ISmsService, SmsService>();
+builder.Services.AddSingleton<ISmsTokenStorage, SmsTokenStorage>();
 
 
 
@@ -82,6 +94,14 @@ builder.Services.AddCors(options =>
 
 });
 
+builder.Services.AddHttpClient("SMSClient", client =>
+{
+    client.BaseAddress = new Uri("https://www.payamsms.com/");
+    client.Timeout = TimeSpan.FromSeconds(60);
+    client.DefaultRequestHeaders.Add("Accept", "application/json");
+});
+
+
 
 
 var app = builder.Build();
@@ -97,5 +117,5 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
-
+app.UseHangfireDashboard("/hangfire");
 app.Run();

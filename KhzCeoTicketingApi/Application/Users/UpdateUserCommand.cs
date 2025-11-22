@@ -17,6 +17,7 @@ namespace KhzCeoTicketingApi.Application.Users;
 public sealed record UpdateUserCommand : ICommand<UserDto>
 {
     public int UserId { set; get; }
+    public string UserName { set; get; }
     public string FirstName { set; get; }
     public string LastName { set; get; }
     public bool IsActive { set; get; }
@@ -47,7 +48,9 @@ public class UpdateUserCommandValidation : AbstractValidator<UpdateUserCommand>
             .NotEmpty().WithMessage("نام خانوادگی نمی‌تواند خالی باشد.")
             .MaximumLength(50).WithMessage("نام خانوادگی نباید بیشتر از ۵۰ کاراکتر باشد.");
 
-       
+        RuleFor(x => x.UserName)
+            .NotEmpty().WithMessage("نام کاربری نمی‌تواند خالی باشد.")
+            .MaximumLength(50).WithMessage("نام کاربری نباید بیشتر از ۵۰ کاراکتر باشد.");
     }
 
 }
@@ -76,7 +79,11 @@ public sealed class UpdateUserCommandHandler : ICommandHandler<UpdateUserCommand
       var currentRole= await _context.Roles.Where(r => r.Id == command.RoleId).FirstOrDefaultAsync();
       if (currentRole == null)
           throw new NotFoundException("رول کاربر یافت نشد");
-      
+
+    var countUserExis= await _context.Users.Where(d => d.UserName == command.UserName && d.UserId != command.UserId).CountAsync();
+    if (countUserExis > 0)
+        throw new Exception("نام کاربری تکراری است");
+    
         
         var user = await _context.Users.Where(d => d.UserId==command.UserId)
             .Include(d=>d.Roles)
@@ -112,6 +119,8 @@ public sealed class UpdateUserCommandHandler : ICommandHandler<UpdateUserCommand
         user.IsActive = command.IsActive;
         user.Mobile = command.Mobile;
         user.LocalNumber = command.LocalNumber;
+        user.UserName=command.UserName;
+        
          await _context.SaveChangesAsync(cancellationToken);
 
         return UserDto.From(user);

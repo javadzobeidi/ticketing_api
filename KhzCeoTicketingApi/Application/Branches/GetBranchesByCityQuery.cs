@@ -22,7 +22,7 @@ public sealed class GetBranchListCityQueryHandler(IApplicationDbContext context)
             .Select(d => new ItemValue
             {
                 Id=d.Id,
-                Title = " شعبه " + d.Branch.Title + " واحد " + d.Department.Title
+                Title =  " واحد " + d.Department.Title + " - " + d.Branch.Title 
                 
             }).AsNoTracking().ToListAsync();
         
