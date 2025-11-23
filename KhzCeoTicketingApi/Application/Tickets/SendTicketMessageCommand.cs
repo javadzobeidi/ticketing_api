@@ -9,6 +9,7 @@ using KhzCeoTicketingApi.Application.Extensions;
 using KhzCeoTicketingApi.Application.Users;
 using KhzCeoTicketingApi.Application.Validator;
 using KhzCeoTicketingApi.Domains.Enums;
+using KhzCeoTicketingApi.Infrastructure.Data.Interfaces;
 
 namespace KhzCeoTicketingApi.Application.Branches;
 
@@ -37,7 +38,9 @@ public sealed class SendTicketMessageCommandValidation : AbstractValidator<SendT
 
 
 public sealed class SendTicketMessageCommandHandler(
-    IApplicationDbContext context,IUser user,IMediator mediator) 
+    IApplicationDbContext context,IUser user,IMediator mediator,
+    ISmsService smsService
+    ) 
     : ICommandHandler<SendTicketMessageCommand, bool>
 {
     public async ValueTask<bool> Handle(SendTicketMessageCommand request, CancellationToken cancellationToken)
@@ -48,6 +51,9 @@ public sealed class SendTicketMessageCommandHandler(
       var ticket= await context.Tickets.Where(d => d.IdentityCode == request.Code).FirstOrDefaultAsync();
       if (ticket == null)
           throw new NotFoundException("اطلاعات تیکت یافت نشد");
+
+     
+      
 
       if (ticket.CurrentAssignmentUserId.HasValue && ticket.CurrentAssignmentUserId != user.UserId)
           throw new Exception("امکان ارسال پیام نمی باشد");
@@ -96,6 +102,12 @@ public sealed class SendTicketMessageCommandHandler(
            }
 
            await context.SaveChangesAsync(cancellationToken);
+
+
+          var phoneNumber=await context.Users.Where(d => d.UserId == ticket.UserId).Select(d=>d.Mobile).FirstOrDefaultAsync(cancellationToken);
+
+          await smsService.SendSMSAsync( phoneNumber,"کاربر گرامی، به تیکت شما پاسخ داده شد لغو=11", ticket.UserId.ToString());
+           
            return true;
       
         
