@@ -128,4 +128,27 @@ public class AuthController:ApiControllerBase
         return Success();
         
     }
+    
+    [HttpPost]
+    [Authorize]
+    [Route("sendotp_changepassword")]
+    public async Task<IActionResult> SendOtpChangePassword()
+    {  
+
+        var result=  await Mediator.Send(new SendOtpChangePasswordCommand());
+        return Success(result);
+        
+    }
+    
+    [HttpPost]
+    [Authorize]
+    [Route("verify_changepassword")]
+    public async Task<IActionResult> VerifyChangePassword(VerifyChangePasswordCommand command)
+    {  
+
+        var result=  await Mediator.Send(command);
+        return Success(result);
+        
+    }
+    
 }

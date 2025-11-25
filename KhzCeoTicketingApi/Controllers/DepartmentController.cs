@@ -2,13 +2,14 @@ using Microsoft.AspNetCore.Mvc;
 using Application;
 using KhzCeoTicketingApi.Application.Contract;
 using KhzCeoTicketingApi.Application.Departments;
+using Microsoft.AspNetCore.Authorization;
 
 namespace KhzCeoTicketingApi.Controllers;
 
 
 [ApiController]
 [Route("[controller]")]
-
+[Authorize]
 public class DepartmentController : ApiControllerBase
 {
     private readonly ILogger<DepartmentController> _logger;

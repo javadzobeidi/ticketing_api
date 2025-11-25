@@ -3,6 +3,7 @@ using KhzCeoTicketingApi.Application.Contract;
 using Microsoft.AspNetCore.Mvc;
 using Application;
 using KhzCeoTicketingApi.Application.Departments;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace KhzCeoTicketingApi.Controllers;
@@ -10,6 +11,7 @@ namespace KhzCeoTicketingApi.Controllers;
 
 [ApiController]
 [Route("[controller]")]
+[Authorize]
 public class BranchController : ApiControllerBase
 {
     private readonly ILogger<BranchController> _logger;
