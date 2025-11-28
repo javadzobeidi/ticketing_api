@@ -27,6 +27,7 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     public DbSet<Role> Roles => Set<Role>();
     public DbSet<Ticket> Tickets => Set<Ticket>();
     public DbSet<TicketStatus> TicketStatus => Set<TicketStatus>();
+    public DbSet<TicketMessage> TicketMessages => Set<TicketMessage>();
 
     public DbSet<Attachment> Attachments => Set<Attachment>();
 
@@ -48,6 +49,12 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
+        
+        builder.Entity<Department>()
+            .HasOne(d => d.Parent)
+            .WithMany(d => d.Children)
+            .HasForeignKey(d => d.ParentId)
+            .OnDelete(DeleteBehavior.Restrict);
         
         builder.Entity<User>()
             .HasKey(u => u.UserId);

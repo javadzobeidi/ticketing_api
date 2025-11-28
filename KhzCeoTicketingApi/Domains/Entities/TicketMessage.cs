@@ -1,5 +1,8 @@
-﻿namespace KhzCeoTicketingApi.Domains.Entities;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
+namespace KhzCeoTicketingApi.Domains.Entities;
+
+[Table("TicketMessage")]
 public class TicketMessage
 {
     public long Id { get; set; }

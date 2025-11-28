@@ -72,5 +72,17 @@ public class TicketController : ApiControllerBase
         return Success(result);
     }
 
+    [HttpGet]
+    [Authorize]
+    [Route("remove/{Id}")]
+    public async Task<IActionResult> List(long Id)
+    {
+        
+        var result = await Mediator.Send(new RemoveTicketMessageCommand(Id));
+        return Success(result);
+        
+    }
+
+    
  
 }

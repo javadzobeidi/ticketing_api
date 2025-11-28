@@ -48,6 +48,15 @@ public sealed class GetTicketsListForManagerValidation : AbstractValidator<GetTi
     }
 }
 
+public class FindDepartmentModel
+{
+    public int CityId { set; get; }
+    public int BranchId { set; get; }
+    public int DepartmentId { set; get; }
+
+
+}
+
 public sealed class GetTicketsListForManagerHandler(
     IApplicationDbContext context,IMediator mediator,
     IUser user) 
@@ -59,20 +68,48 @@ public sealed class GetTicketsListForManagerHandler(
         
         var currentUser=await mediator.Send(new GetUserByIdQuery(user.UserId));
 
+
+     var originalDepartments=  await  context.Departments.AsNoTracking().ToListAsync(cancellationToken);
+
+     List<FindDepartmentModel> models = new List<FindDepartmentModel>();
+     
+        
         var departments=currentUser.UserDepartments.Select(d => new
         {
             d.CityId,
             d.BranchId,
             d.DepartmentId
         }).ToList();
+
+        List<int> departmentIds = new List<int>();
+        foreach (var d in departments)
+        {
+           var currentDepartment= originalDepartments.Where(dep => dep.Id == d.DepartmentId).FirstOrDefault();
+           
+           if (currentDepartment!=null)
+           {
+              var deps= currentDepartment.GetFullHierarchy(originalDepartments).Select(f => f.Id).ToList();
+
+              foreach (var dep_h in deps)
+              {
+                  models.Add(new FindDepartmentModel
+                  {
+                      DepartmentId = dep_h,
+                      CityId = d.CityId,
+                      BranchId = d.BranchId,
+                  });
+                  
+              }
+           }
+
+        }
         
         var cityIds =currentUser.UserDepartments.Select(x => x.CityId).Distinct().ToList();
         var branchIds = currentUser.UserDepartments.Select(x => x.BranchId).Distinct().ToList();
-        var departmentIds = currentUser.UserDepartments.Select(x => x.DepartmentId).Distinct().ToList();
       
         var predicate = PredicateBuilder.New<Ticket>(true);
         
-        foreach (var filter in departments)
+        foreach (var filter in models)
         {
             var localFilter = filter; 
     
