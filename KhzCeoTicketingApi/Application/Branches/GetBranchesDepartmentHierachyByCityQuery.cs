@@ -84,7 +84,7 @@ public sealed class GetFullBranchesDepartmentByCityQueryHandler(IApplicationDbCo
         {
             foreach (var t in d.Children)
             {
-                d.Branches=   branchList.Where(dep => dep.DepartmentId == d.Id)
+                t.Branches=   branchList.Where(dep => dep.DepartmentId == t.Id)
                     .Select(b => new ItemBranch
                     {
                         Id = b.Id,
@@ -93,6 +93,14 @@ public sealed class GetFullBranchesDepartmentByCityQueryHandler(IApplicationDbCo
                     .ToList();
             }
        
+            d.Branches=   branchList.Where(dep => dep.DepartmentId == d.Id)
+                .Select(b => new ItemBranch
+                {
+                    Id = b.Id,
+                    Title = b.Title
+                })
+                .ToList();
+            
         }
      
 

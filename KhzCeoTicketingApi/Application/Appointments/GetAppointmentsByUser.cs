@@ -10,7 +10,8 @@ using Microsoft.EntityFrameworkCore;
 namespace KhzCeoTicketingApi.Application.Branches;
 
 
-public sealed record GetAppointmentsByUser(string startDate,string endDate) : IQuery<List<AppointmentListUserItem>>
+public sealed record 
+    GetAppointmentsByUser(string startDate,string endDate) : IQuery<List<AppointmentListUserItem>>
 {
     
     
