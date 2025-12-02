@@ -47,6 +47,7 @@ public sealed class GetFullBranchesDepartmentByCityQueryHandler(IApplicationDbCo
     
     public async ValueTask<List<BranchDepartmentHierachyItem>> Handle(GetBranchesDepartmentHierachyByCityQuery query, CancellationToken cancellationToken)
     {
+        
 
        var departments=await context.Departments
            .Select(d=>new BranchDepartmentHierachyItem
@@ -56,29 +57,42 @@ public sealed class GetFullBranchesDepartmentByCityQueryHandler(IApplicationDbCo
                Title = d.Title,
            })
            .AsNoTracking().ToListAsync(cancellationToken);
-    var treeDepartments=   BuildTree(departments);
-    
-            
-        var list = await context.BranchDepartments
-            .Where(b => b.Branch.CityId == query.CityId && b.Department.ParentId==null)
-            .Select(d => new 
-            {
-                Id=d.Id,
-                Title = d.Branch.Title,
-                ParentId = d.Department.ParentId,
-                DepartmentId=d.DepartmentId
+      var departmentsIds= departments.Select(d => d.Id).ToList();
+       
+       
+       
+       var branchList = await context.BranchDepartments
+           .Where(b => b.Branch.CityId == query.CityId )
+           .Select(d => new 
+           {
+               Id=d.Id,
+               Title = d.Branch.Title,
+               ParentId = d.Department.ParentId,
+               DepartmentId=d.DepartmentId
                 
-            }).AsNoTracking().ToListAsync();
+           }).AsNoTracking().ToListAsync();
+
+      var departmetsBranchIds= branchList.Select(d => d.DepartmentId).ToList();
+
+     departments= departments.Where(d => departmetsBranchIds.Contains(d.Id)).ToList();
+            
+       
+       var treeDepartments=   BuildTree(departments);
+    
 
         foreach (var d in treeDepartments)
         {
-         d.Branches=   list.Where(dep => dep.DepartmentId == d.Id)
-                .Select(b => new ItemBranch
-                {
-                    Id = b.Id,
-                    Title = b.Title
-                })
-                .ToList();
+            foreach (var t in d.Children)
+            {
+                d.Branches=   branchList.Where(dep => dep.DepartmentId == d.Id)
+                    .Select(b => new ItemBranch
+                    {
+                        Id = b.Id,
+                        Title = b.Title
+                    })
+                    .ToList();
+            }
+       
         }
      
 

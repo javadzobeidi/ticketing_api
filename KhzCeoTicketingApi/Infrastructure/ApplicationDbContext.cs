@@ -38,6 +38,7 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
 
     public DbSet<Department> Departments => Set<Department>();
     public DbSet<BranchDepartment> BranchDepartments => Set<BranchDepartment>();
+    public DbSet<MessageTemplate> MessageTemplates => Set<MessageTemplate>();
 
     public DbSet<Appointment> Appoinments => Set<Appointment>();
 

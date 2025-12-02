@@ -2,16 +2,16 @@
 using KhzCeoTicketingApi.Application.Common.Interfaces;
 using KhzCeoTicketingApi.Application.Contract;
 using KhzCeoTicketingApi.Domains.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace KhzCeoTicketingApi.Application.Departments;
 
-public sealed record CreateMessageTemplateCommand : ICommand<DepartmentDto>
+public sealed record CreateMessageTemplateCommand : ICommand<bool>
 {
+    public int? Id { set; get; }
+    
     public string Title { get; init; } = string.Empty;
-
     public string Description { set; get; }
-
-    public bool IsActive { get; init; } = true;
 }
 public sealed class CreateMessageTemplateCommandValidation : AbstractValidator<CreateMessageTemplateCommand>
 {
@@ -31,25 +31,32 @@ public sealed class CreateMessageTemplateCommandValidation : AbstractValidator<C
     
     
 }
-public sealed class CreateMessageTemplateCommandHandler(IApplicationDbContext context) : ICommandHandler<CreateMessageTemplateCommand, DepartmentDto>
+public sealed class CreateMessageTemplateCommandHandler(IApplicationDbContext context) : ICommandHandler<CreateMessageTemplateCommand, bool>
 {
 
     
 
-    public async ValueTask<DepartmentDto> Handle(CreateMessageTemplateCommand command, CancellationToken cancellationToken)
+    public async ValueTask<bool> Handle(CreateMessageTemplateCommand command, CancellationToken cancellationToken)
     {
-        var department = new Department
+
+        MessageTemplate item = null;
+        if (command.Id.HasValue)
         {
-            Title = command.Title,
-            IsActive = command.IsActive
-        };
-        context.Departments.Add(department);
-        await context.SaveChangesAsync(cancellationToken);
-        return new DepartmentDto
+            item=  await context.MessageTemplates.Where(d => d.Id == command.Id).FirstOrDefaultAsync();
+            
+        }
+        
+
+        if (item == null)
         {
-            Id = department.Id,
-            Title = department.Title,
-            IsActive = department.IsActive
-        };
+            item=new  MessageTemplate();
+            context.MessageTemplates.Add(item);
+        }
+        item.Title = command.Title;
+        item.Description = command.Description;
+        
+        
+       await context.SaveChangesAsync(cancellationToken);
+       return true;
     }
 }
