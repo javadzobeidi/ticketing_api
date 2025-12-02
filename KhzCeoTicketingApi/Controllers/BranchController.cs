@@ -45,7 +45,7 @@ public class BranchController : ApiControllerBase
         var result = await Mediator.Send(command, cancellationToken);
         return Success(result);
     }
-
+    
     [HttpGet("{id}")]
     public async Task<ActionResult<BranchDto>> GetById(int id, CancellationToken cancellationToken)
     {
@@ -74,6 +74,17 @@ public class BranchController : ApiControllerBase
     }
     
     [HttpGet]
+    [Route("hierarchyByCity/{cityId}")]
+    public async Task<ActionResult<List<BranchDto>>> GetBranchHierarchyByCity(int cityId,CancellationToken cancellationToken)
+    {
+        var query = new GetBranchesDepartmentHierachyByCityQuery() { CityId = cityId };
+        
+        var result = await Mediator.Send(query, cancellationToken);
+        return Success(result);
+    }
+    
+    
+    [HttpGet]
     [Route("users/{id}")]
     public async Task<ActionResult<List<UserDepartmentItem>>> GetUsers(int id,CancellationToken cancellationToken)
     {
@@ -81,4 +92,26 @@ public class BranchController : ApiControllerBase
         var result = await Mediator.Send(query, cancellationToken);
         return Success(result);
     }
+    [HttpGet]
+    [Route("usersByCity/{id}")]
+    public async Task<ActionResult<List<UserDepartmentItem>>> GetUsersByCity(int id,CancellationToken cancellationToken)
+    {
+        var query = new GetUserDepartmentsByCityQuery(id);
+        var result = await Mediator.Send(query, cancellationToken);
+        return Success(result);
+    }
+    
+    
+    [HttpGet]
+    [Route("branchdepartmentsByCity/{id}")]
+    public async Task<ActionResult<List<UserDepartmentItem>>> GetBranchesDepartmentsByCity(int id,CancellationToken cancellationToken)
+    {
+        var query = new GetBranchesDepartmentsByCityQuery(id);
+        var result = await Mediator.Send(query, cancellationToken);
+        return Success(result);
+    }
+
+    
+    
+        
 }

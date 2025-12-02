@@ -52,6 +52,17 @@ public class DepartmentController : ApiControllerBase
         return Success(result);
     }
 
+    
+    
+    [HttpGet]
+    [Route("FullHierarchy")]
+    public async Task<ActionResult<List<DepartmentDto>>> GetFullHierarchy(CancellationToken cancellationToken)
+    {
+        var query = new GetFullDepartmentHierarchyQuery() ;
+        var result = await Mediator.Send(query, cancellationToken);
+        return Success(result);
+    }
+    
     [HttpGet]
     public async Task<ActionResult<List<DepartmentDto>>> GetAll(CancellationToken cancellationToken)
     {

@@ -34,6 +34,8 @@ public record TicketDetailsItem
     public string Time { set; get; }
     public string User { set; get; }
 
+    public bool CanDelete { set; get; }
+
     public long? CurrentAssignUserId { set; get; }
 
 
@@ -42,11 +44,18 @@ public record TicketDetailsItem
 
 public record TicketDetailsMessageItem
 {
-   
-    
+
+
+    public long Id { set; get; }
+
     public string Message { set; get; }
     public string User { set; get; }
     public string Date { set; get; }
+
+    public DateTime SendDateTime { set; get; }
+
+    public double ExpireInSecounds { set; get; }
+
     public string Time { set; get; }
 
     public bool IsFromStuff { set; get; }
@@ -102,8 +111,10 @@ public sealed class GetTicketDetailsByManageHandler(
           CurrentAssignUserId=d.CurrentAssignmentUserId,
        Messages=     d.TicketMessages.Select(ap => new TicketDetailsMessageItem
             {
+                Id=ap.Id,
                 User = ap.Sender.FirstName + " " + ap.Sender.LastName,
                 Message = ap.Message,
+                SendDateTime=ap.SentAt,
                 Date =ap.DateFa,
                 Time = ap.TimeFa,
                 IsFromStuff=ap.IsFromStaff,
@@ -127,6 +138,19 @@ public sealed class GetTicketDetailsByManageHandler(
      {
          if ( item.CurrentAssignUserId == user.UserId || item.CurrentAssignUserId==null)
              item.CanProcess = true;
+     }
+     
+     DateTime dt=DateTime.Now;
+     foreach (var m in item.Messages)
+     {
+         double remainingSeconds = 60 - (dt - m.SendDateTime).TotalSeconds;
+
+         if (remainingSeconds < 0)
+             remainingSeconds = 0;
+
+         m.ExpireInSecounds = remainingSeconds;
+
+
      }
 
 

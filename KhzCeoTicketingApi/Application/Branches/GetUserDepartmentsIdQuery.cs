@@ -15,7 +15,7 @@ public record UserDepartmentItem
     public string FullName { set; get; }
 
     public string Role { set; get; }
-
+    public string Description { set; get; }
     public long Id { set; get; }
 }
 

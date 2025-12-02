@@ -15,6 +15,7 @@ namespace KhzCeoTicketingApi.Application.Branches;
 public sealed record CreateTicketCommand : ICommand<bool>
 {
     public long BranchDepartmentId { set; get; }
+    public int DepartmentId { set; get; }
     public string Message { set; get; }
     public List<IFormFile>? Attachments { set; get; } = new List<IFormFile>();
 
@@ -53,7 +54,7 @@ public sealed class CreateTicketCommandHandler(
         var entity = new Ticket();
         entity.CityId = branch.Branch.CityId;
         entity.BranchId = branch.BranchId;
-        entity.DepartmentId = branch.DepartmentId;
+        entity.DepartmentId = request.DepartmentId;
         entity.Description = request.Message;
         entity.UserId = userId;
         entity.TicketDate = now;
