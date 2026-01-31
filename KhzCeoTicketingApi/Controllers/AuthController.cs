@@ -39,10 +39,7 @@ public class AuthController:ApiControllerBase
         }
         
         var user = await Mediator.Send(new LoginUserCommand(model.Username, model.Password));
-        
         GenerateCookie(user);
-        
-        
         return Success();
     }
     
@@ -96,8 +93,6 @@ public class AuthController:ApiControllerBase
             cookieOptions.Domain = ".khzceo.ir";
         }
         Response.Cookies.Append("khzco", user.Token, cookieOptions);
-
-        
     }
 
     

@@ -17,8 +17,7 @@ public sealed record SendTicketMessageCommand : ICommand<bool>
 {
     public Guid Code { set; get; }
     public string Message { set; get; }
-    public IFormFile? Attachment { set; get; }
-
+    public List<IFormFile>? Attachments { set; get; } = new List<IFormFile>();
 }
 
 
@@ -28,11 +27,10 @@ public sealed class SendTicketMessageCommandValidation : AbstractValidator<SendT
     { 
         RuleFor(x => x.Message)
         .NotEmpty().WithMessage("متن پیام را وارد کنید ")
-        .MaximumLength(500).WithMessage("متن پیام بیش از حد مجاز است");
+        .MaximumLength(5000).WithMessage("متن پیام بیش از حد مجاز است");
         
-        RuleFor(x => x.Attachment)
+        RuleForEach(x => x.Attachments)
             .SetValidator(new FileValidator()); 
-        
      }
 }
 
@@ -76,31 +74,32 @@ public sealed class SendTicketMessageCommandHandler(
            message.MessageTypeId = 1;
 
 
-           if (request.Attachment != null)
+           
+           foreach (var attachment in request.Attachments)
            {
-               string fileName = $"{Guid.NewGuid()}_{Path.GetFileName(request.Attachment.FileName)}";
+               string fileName = $"{Guid.NewGuid()}_{Path.GetFileName(attachment.FileName)}";
                string filePath = Path.Combine("Uploads", "Tickets", ticket.IdentityCode.ToString());
                Directory.CreateDirectory(filePath);
                string fullPath = Path.Combine(filePath, fileName);
                using (var stream = new FileStream(fullPath, FileMode.Create))
                {
-                   await request.Attachment.CopyToAsync(stream);
+                   await attachment.CopyToAsync(stream);
                }
-
                message.TicketAttachments.Add(new TicketAttachment
                {
                    Attachment = new Attachment
                    {
-                       FileName = request.Attachment.FileName,
+                       FileName = attachment.FileName,
                        FilePath = fullPath,
-                       FileSize = request.Attachment.Length,
-                       ContentType = request.Attachment.ContentType,
+                       FileSize = attachment.Length,
+                       ContentType = attachment.ContentType,
                        UploadDate = now
                    }
                });
-
+            
+            
            }
-
+       
            await context.SaveChangesAsync(cancellationToken);
 
 

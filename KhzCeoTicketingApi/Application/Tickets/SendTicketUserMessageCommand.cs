@@ -27,7 +27,7 @@ public sealed class SendTicketUserMessageCommandValidation : AbstractValidator<S
     { 
         RuleFor(x => x.Message)
         .NotEmpty().WithMessage("متن پیام را وارد کنید ")
-        .MaximumLength(500).WithMessage("متن پیام بیش از حد مجاز است");
+        .MaximumLength(5000).WithMessage("متن پیام بیش از حد مجاز است");
         
         RuleFor(x => x.Attachment)
             .SetValidator(new FileValidator()); 

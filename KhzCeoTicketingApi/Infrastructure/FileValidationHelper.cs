@@ -66,6 +66,7 @@ public static class FileValidationHelper
     { "application/xml", new List<byte[]> 
         { new byte[] { 0x3C, 0x3F, 0x78, 0x6D, 0x6C } } // '<?xml'
     },
+    
 };
     
     public static readonly string[] SupportedMimeTypes =
@@ -82,16 +83,23 @@ public static class FileValidationHelper
         "application/vnd.openxmlformats-officedocument.presentationml.presentation",
         "application/zip",
         "application/x-rar-compressed",
+        "text/plain"
     ];
     
     public static bool IsValidFileType(Stream fileStream, string contentType)
     {
         if (!FileSignatures.TryGetValue(contentType, out var signatures))
             return false; // not a supported type
+        
+        if (contentType == "text/plain" || contentType == "text/csv")
+            return true;
 
         using var reader = new BinaryReader(fileStream);
         var headerBytes = reader.ReadBytes(signatures.Max(m => m.Length));
 
+        if (headerBytes.Length <= 0)
+            return true;
+        
         return signatures.Any(signature =>
             headerBytes.Take(signature.Length).SequenceEqual(signature));
     }

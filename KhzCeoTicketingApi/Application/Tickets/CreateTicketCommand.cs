@@ -28,7 +28,7 @@ public sealed class CreateTicketCommandValidation : AbstractValidator<CreateTick
     { 
         RuleFor(x => x.Message)
         .NotEmpty().WithMessage("متن پیام را وارد کنید ")
-        .MaximumLength(500).WithMessage("متن پیام بیش از حد مجاز است");
+        .MaximumLength(5000).WithMessage("متن پیام بیش از حد مجاز است");
         
         RuleForEach(x => x.Attachments)
             .SetValidator(new FileValidator()); 
