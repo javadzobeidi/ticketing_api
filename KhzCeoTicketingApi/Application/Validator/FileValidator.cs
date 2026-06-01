@@ -5,7 +5,7 @@ namespace KhzCeoTicketingApi.Application.Validator;
 
 public class FileValidator : AbstractValidator<IFormFile>
 {
-    public FileValidator(long maxFileSize = 10 * 1024 * 1024) // default 10MB
+    public FileValidator(long maxFileSize = 15 * 1024 * 1024) // default 10MB
     {
         RuleFor(file => file)
             .NotNull().WithMessage("File is required.")
@@ -13,11 +13,11 @@ public class FileValidator : AbstractValidator<IFormFile>
 
         RuleFor(file => file.Length)
             .LessThanOrEqualTo(maxFileSize)
-            .WithMessage($"File size must be less than {maxFileSize / (1024 * 1024)} MB.");
+            .WithMessage($"حجم فایل کمتر از 15 مگ باشد.");
 
         RuleFor(file => file.ContentType)
             .Must(IsSupportedMimeType)
-            .WithMessage("Unsupported file type.");
+            .WithMessage("فایل ارسالی مجاز نمی باشد");
 
         RuleFor(file => file)
             .Must(IsFileSignatureValid)

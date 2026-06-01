@@ -82,11 +82,11 @@ builder.Services.AddApplicationAuthorization(builder.Configuration);
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("CorsPolicy",
-        builder => builder.AllowAnyOrigin()
+        builder => builder
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials()
-            .WithOrigins("http://localhost:5173","https://crm.khzceo.ir")
+            .WithOrigins("http://localhost:5173","http://crm.khzceo.ir","https://crm.khzceo.ir")
           
     );
 

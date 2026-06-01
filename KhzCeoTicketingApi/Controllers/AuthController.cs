@@ -39,7 +39,16 @@ public class AuthController:ApiControllerBase
         }
         
         var user = await Mediator.Send(new LoginUserCommand(model.Username, model.Password));
-        GenerateCookie(user);
+
+        return Success(
+            new
+            {
+                token = user.Token
+            });
+        
+        
+        
+        // GenerateCookie(user);
         return Success();
     }
     
@@ -58,10 +67,11 @@ public class AuthController:ApiControllerBase
 
         var user = await Mediator.Send(new LogoutUserCommand());
         
+        /*
         var cookieOptions = new CookieOptions
         {
             HttpOnly = true,
-            Secure = true,
+            Secure = false,
             Path = "/",                                  // must match original
             SameSite = SameSiteMode.Strict,
             Expires = DateTimeOffset.UtcNow.AddDays(-1), // expired yesterday
@@ -72,6 +82,7 @@ public class AuthController:ApiControllerBase
         }
      
         Response.Cookies.Append("khzco", "", cookieOptions);
+        */
 
         return Success();
     }
@@ -82,8 +93,8 @@ public class AuthController:ApiControllerBase
         var cookieOptions = new CookieOptions
         {
             HttpOnly = true,
-            Secure = true,
-            SameSite = SameSiteMode.Strict,
+            Secure = false,
+            SameSite = SameSiteMode.Lax,
             Expires = DateTime.Now.AddDays(10),
             Path = "/"
         };
@@ -119,8 +130,9 @@ public class AuthController:ApiControllerBase
     public async Task<IActionResult> VerifyOtp(VerifyOtpCommand model)
     { 
         var result=  await Mediator.Send(model);
-        GenerateCookie(result);
-        return Success();
+        
+   //     GenerateCookie(result);
+        return Success(new { token = result.Token });
         
     }
     

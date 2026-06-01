@@ -7,7 +7,7 @@ namespace KhzCeoTicketingApi.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-[Authorize] 
+ 
 public class AttachmentController:ControllerBase
 {
     private readonly IWebHostEnvironment _environment;

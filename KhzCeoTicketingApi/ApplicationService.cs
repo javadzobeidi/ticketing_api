@@ -38,7 +38,7 @@ public static class ApplicationService
             {
                 OnMessageReceived = context =>
                 {
-                    context.Token = context.Request.Cookies["khzco"];
+                    //context.Token = context.Request.Cookies["khzco"];
                     return Task.CompletedTask;
                 },
                 OnTokenValidated = async context =>
