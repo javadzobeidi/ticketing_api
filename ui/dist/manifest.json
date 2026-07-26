@@ -1,0 +1,15 @@
+{
+  "name": "سامانه تیکتینک و نوبت دهی سازمان نظام مهندسی خوزستان",
+  "short_name": "سامانه تیکتینک و نوبت دهی نظام مهندسی خوزستان",
+  "icons": [
+    {
+      "src": "icons/icon.svg",
+      "sizes": "any",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#000000"
+}
