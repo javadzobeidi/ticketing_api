@@ -18,6 +18,7 @@ import {
   Download, Search, ArrowUpDown
 } from 'lucide-react';
 import { Controller, useForm } from 'react-hook-form';
+import { DepartmentPerformanceTab } from '../department-performancetab/DepartmentPerformanceTab';
 
 // ==================== TYPES ====================
 type FilterForm = {
@@ -275,6 +276,9 @@ const TicketReportsPage = () => {
   // ==================== RENDER ====================
   return (
     <div dir="rtl" className="p-6 space-y-6 bg-gray-50 min-h-screen">
+
+     
+
       {/* Header with Filters */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
@@ -413,6 +417,16 @@ const TicketReportsPage = () => {
       {/* Main Tabs */}
       <Tabs.Root defaultValue="overview" className="space-y-4">
         <Tabs.List className="grid w-full grid-cols-5">
+
+                    <Tabs.Tab className=" relative py-3 px-4 rounded-md text-sm font-medium
+      transition-all duration-200
+      text-gray-600 hover:text-gray-900
+      data-[selected]:bg-white 
+      data-[selected]:text-blue-600 
+      data-[selected]:shadow-sm
+      focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 " value="experts">وضعیت واحد ها</Tabs.Tab>
+
+
           <Tabs.Tab className=" relative py-3 px-4 rounded-md text-sm font-medium
       transition-all duration-200
       text-gray-600 hover:text-gray-900
@@ -449,6 +463,18 @@ const TicketReportsPage = () => {
       data-[selected]:shadow-sm 
       focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" value="satisfaction">رضایت</Tabs.Tab>
         </Tabs.List>
+
+<Tabs.Panel value="experts" className="space-y-4">
+    <DepartmentPerformanceTab 
+        filters={{
+            dateRange: watch('dateRange'),
+            cityId: watch('cityId'),
+            branchId: watch('branchId'),
+            departmentId: watch('departmentId')
+        }} 
+    />
+</Tabs.Panel>
+
 
         {/* Overview Tab */}
         <Tabs.Panel value="overview" className="space-y-4">
