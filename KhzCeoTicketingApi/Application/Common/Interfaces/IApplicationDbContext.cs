@@ -19,6 +19,7 @@ public interface IApplicationDbContext
     DbSet<TicketStatus> TicketStatus { get; }
     DbSet<TicketMessage> TicketMessages { get; }
     DbSet<MessageTemplate> MessageTemplates { get; }
+    DbSet<TicketAssignment> TicketAssignments { get; }
 
     DbSet<Attachment> Attachments { get; }
 

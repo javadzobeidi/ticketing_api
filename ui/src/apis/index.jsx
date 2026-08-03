@@ -14,6 +14,8 @@ import {captcha} from './captcha'
 import {home} from './home'
 import { dashboard } from './dashboard';
 import { messageTemplate } from './messagetemplate';
+import { reports } from './reports';
+
 export const api = axios.create({
   baseURL,
   headers: {
@@ -112,5 +114,6 @@ export const apiServices  = {
   captcha,
   home,
   ticket,
-  messageTemplate
+  messageTemplate,
+  reports
 };

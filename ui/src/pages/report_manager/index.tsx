@@ -18,7 +18,7 @@ import {
   Download, Search, ArrowUpDown
 } from 'lucide-react';
 import { Controller, useForm } from 'react-hook-form';
-import { DepartmentPerformanceTab } from '../department-performancetab/DepartmentPerformanceTab';
+import { DepartmentPerformanceTab } from '../reports/DepartmentPerformancePage';
 
 // ==================== TYPES ====================
 type FilterForm = {
@@ -465,14 +465,7 @@ const TicketReportsPage = () => {
         </Tabs.List>
 
 <Tabs.Panel value="experts" className="space-y-4">
-    <DepartmentPerformanceTab 
-        filters={{
-            dateRange: watch('dateRange'),
-            cityId: watch('cityId'),
-            branchId: watch('branchId'),
-            departmentId: watch('departmentId')
-        }} 
-    />
+    
 </Tabs.Panel>
 
 

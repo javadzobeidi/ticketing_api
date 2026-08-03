@@ -1,6 +1,8 @@
-﻿using KhzCeoTicketingApi.Domains.Enums;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using KhzCeoTicketingApi.Domains.Enums;
 
 namespace KhzCeoTicketingApi.Domains.Entities;
+[Table("TicketAssignment")]
 public class TicketAssignment
 {
     public long Id { get; set; }

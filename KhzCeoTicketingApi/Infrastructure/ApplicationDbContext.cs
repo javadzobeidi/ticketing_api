@@ -20,6 +20,7 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
         
     }
     public DbSet<OtpSms> OtpSms => Set<OtpSms>();
+    public DbSet<TicketAssignment> TicketAssignments => Set<TicketAssignment>();
 
     public DbSet<User> Users => Set<User>();
     public DbSet<City> Cities => Set<City>();

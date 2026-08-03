@@ -1,107 +1,85 @@
 using KhzCeoTicketingApi.Application.Common.Interfaces;
+using KhzCeoTicketingApi.Domains.Entities;
+using KhzCeoTicketingApi.Domains.Enums;
+using KhzCeoTicketingApi.Application.Extensions;
 using LinqKit;
 using Microsoft.EntityFrameworkCore;
-using KhzCeoTicketingApi.Domains.Enums;
-using KhzCeoTicketingApi.Domains.Entities;
-using KhzCeoTicketingApi.Application.Extensions;
-using KhzCeoTicketingApi.Application.Reports.Contracts;
 
-namespace KhzCeoTicketingApi.Application.Reports;
-
-public sealed record GetDepartmentPerformanceQuery : IQuery<List<DepartmentPerformanceReportDto>>
+namespace KhzCeoTicketingApi.Application.Reports
 {
-    public string? StartDate { get; set; }
-    public string? EndDate { get; set; }
-    public int? TargetDepartmentId { get; set; } // اگر نال باشد همه واحدها را می‌آورد
-}
-
-public sealed class GetDepartmentPerformanceQueryHandler(IApplicationDbContext context) 
-    : IQueryHandler<GetDepartmentPerformanceQuery, List<DepartmentPerformanceReportDto>>
-{
-    public async ValueTask<List<DepartmentPerformanceReportDto>> Handle(GetDepartmentPerformanceQuery request, CancellationToken cancellationToken)
+    // مدل خروجی گزارش واحدها
+    public sealed class DepartmentPerformanceDto
     {
-        var predicate = PredicateBuilder.New<Ticket>(true);
+        public int DepartmentId { get; set; }
+        public string DepartmentName { get; set; }
+        public int TotalTickets { get; set; }
+        public int UnassignedTickets { get; set; } // منتظر ارجاع به کارشناس
+        public int ActiveTickets { get; set; }     // در دست اقدام کارشناسان
+        public int ClosedTickets { get; set; }     // حل شده
+    }
 
-        // 1. بررسی Hierarchy دپارتمان‌ها
-        if (request.TargetDepartmentId.HasValue && request.TargetDepartmentId > 0)
+    public sealed record GetDepartmentPerformanceQuery : IQuery<List<DepartmentPerformanceDto>>
+    {
+        public string? StartDate { get; set; }
+        public string? EndDate { get; set; }
+        public int? CityId { get; set; }
+        public int? BranchId { get; set; }
+        // فیلتر دپارتمان را اینجا نیاوردیم چون این گزارش کل دپارتمان‌ها را مقایسه می‌کند
+    }
+
+    public sealed class GetDepartmentPerformanceQueryHandler(IApplicationDbContext context) 
+        : IQueryHandler<GetDepartmentPerformanceQuery, List<DepartmentPerformanceDto>>
+    {
+        public async ValueTask<List<DepartmentPerformanceDto>> Handle(GetDepartmentPerformanceQuery request, CancellationToken cancellationToken)
         {
-            var originalDepartments = await context.Departments
+            var predicate = PredicateBuilder.New<Ticket>(true);
+
+            // فیلترهای تاریخ و مکان
+            if (request.CityId.HasValue && request.CityId > 0)
+                predicate = predicate.And(t => t.CityId == request.CityId);
+
+            if (request.BranchId.HasValue && request.BranchId > 0)
+                predicate = predicate.And(t => t.BranchId == request.BranchId);
+
+            if (!string.IsNullOrEmpty(request.StartDate) && !string.IsNullOrEmpty(request.EndDate))
+            {
+                DateTime startDate = request.StartDate.ToDateTime();
+                DateTime endDate = request.EndDate.ToDateTime();
+                predicate = predicate.And(t => t.TicketDate.Date >= startDate.Date && t.TicketDate.Date <= endDate.Date);
+            }
+
+            var openTicketsStatus = new List<int> 
+            { 
+                (int)TicketStatusEnum.Open, 
+                (int)TicketStatusEnum.AnsweredByStaff, 
+                (int)TicketStatusEnum.AnsweredByUser, 
+                (int)TicketStatusEnum.Referred 
+            };
+
+            // گروه‌بندی بر اساس واحدها و شمارش وضعیت‌ها
+            var departmentsData = await context.Tickets
                 .AsNoTracking()
+                .Where(predicate)
+                .GroupBy(t => new { t.DepartmentId, t.Department.Title })
+                .Select(g => new DepartmentPerformanceDto
+                {
+                    DepartmentId = g.Key.DepartmentId,
+                    DepartmentName = g.Key.Title,
+                    TotalTickets = g.Count(),
+                    
+                    // تیکت‌هایی که وضعیتشان باز است اما هیچ کارشناسی ندارند
+                    UnassignedTickets = g.Count(t => t.CurrentAssignmentUserId == null && openTicketsStatus.Contains(t.TicketStatusId)),
+                    
+                    // تیکت‌هایی که باز هستند و الان دست یک کارشناس می‌باشند
+                    ActiveTickets = g.Count(t => t.CurrentAssignmentUserId != null && openTicketsStatus.Contains(t.TicketStatusId)),
+                    
+                    // تیکت‌های بسته شده
+                    ClosedTickets = g.Count(t => t.TicketStatusId == (int)TicketStatusEnum.Closed)
+                })
+                .OrderByDescending(x => x.TotalTickets) // مرتب‌سازی از پرکارترین واحد به کم‌کارترین
                 .ToListAsync(cancellationToken);
 
-            var targetDep = originalDepartments.FirstOrDefault(d => d.Id == request.TargetDepartmentId);
-            if (targetDep != null)
-            {
-                // گرفتن شناسه خود دپارتمان و تمام فرزندانش
-                var depIds = targetDep.GetFullHierarchy(originalDepartments).Select(d => d.Id).ToList();
-                predicate = predicate.And(t => depIds.Contains(t.DepartmentId));
-            }
+            return departmentsData;
         }
-
-        // 2. فیلتر تاریخ
-        if (!string.IsNullOrEmpty(request.StartDate) && !string.IsNullOrEmpty(request.EndDate))
-        {
-            DateTime startDate = request.StartDate.ToDateTime();
-            DateTime endDate = request.EndDate.ToDateTime();
-            predicate = predicate.And(t => t.TicketDate.Date >= startDate.Date && t.TicketDate.Date <= endDate.Date);
-        }
-
-        var openTicketsStatus = new List<int> { 1, 2, 3, 5 };
-
-        // 3. دریافت دیتای خام با Select (بسیار سبک برای دیتابیس)
-        var rawStats = await context.Tickets
-            .AsNoTracking()
-            .AsExpandable()
-            .Where(predicate)
-            .Select(t => new 
-            {
-                t.DepartmentId,
-                DepartmentTitle = t.Department.Title,
-                t.CurrentAssignmentUserId,
-                UserFirstName = t.CurrentAssignmentUser != null ? t.CurrentAssignmentUser.FirstName : null,
-                UserLastName = t.CurrentAssignmentUser != null ? t.CurrentAssignmentUser.LastName : null,
-                t.TicketStatusId,
-                // آیا کارشناس فعلی، روی این تیکت پیامی ارسال کرده؟
-                HasAnswered = t.TicketMessages.Any(m => m.SenderId == t.CurrentAssignmentUserId),
-                // تعداد دفعاتی که این شخص تیکت را ارجاع داده
-                ForwardedCount = t.TicketAssignments.Count(a => a.FromUserId == t.CurrentAssignmentUserId)
-            })
-            .ToListAsync(cancellationToken);
-
-        // 4. پردازش و گروه‌بندی نهایی در حافظه سیستم (RAM)
-        var reports = rawStats
-            .GroupBy(x => new { x.DepartmentId, x.DepartmentTitle })
-            .Select(depGroup => new DepartmentPerformanceReportDto
-            {
-                DepartmentId = depGroup.Key.DepartmentId,
-                DepartmentName = depGroup.Key.DepartmentTitle,
-                
-                // آمارهای کل واحد
-                TotalTickets = depGroup.Count(),
-                UnassignedTickets = depGroup.Count(x => x.CurrentAssignmentUserId == null), // کسی نگرفته
-                OpenTickets = depGroup.Count(x => openTicketsStatus.Contains(x.TicketStatusId)),
-                ClosedTickets = depGroup.Count(x => x.TicketStatusId == (int)TicketStatusEnum.Closed),
-                
-                // لیست کارشناسان داخل این واحد و عملکردشان
-                Users = depGroup
-                    .Where(x => x.CurrentAssignmentUserId != null) // فقط تیکت‌هایی که دست کارشناس است
-                    .GroupBy(u => new { u.CurrentAssignmentUserId, u.UserFirstName, u.UserLastName })
-                    .Select(userGroup => new DepartmentUserPerformanceDto
-                    {
-                        UserId = userGroup.Key.CurrentAssignmentUserId,
-                        UserName = $"{userGroup.Key.UserFirstName} {userGroup.Key.UserLastName}",
-                        HandledTicketsCount = userGroup.Count(),
-                        OpenTickets = userGroup.Count(x => openTicketsStatus.Contains(x.TicketStatusId)),
-                        ClosedTickets = userGroup.Count(x => x.TicketStatusId == (int)TicketStatusEnum.Closed),
-                        AnsweredCount = userGroup.Count(x => x.HasAnswered),
-                        ForwardedCount = userGroup.Sum(x => x.ForwardedCount)
-                    })
-                    .OrderByDescending(u => u.HandledTicketsCount)
-                    .ToList()
-            })
-            .OrderByDescending(d => d.TotalTickets)
-            .ToList();
-
-        return reports;
     }
 }

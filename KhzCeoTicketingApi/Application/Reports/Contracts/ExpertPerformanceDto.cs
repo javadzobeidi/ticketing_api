@@ -12,7 +12,7 @@ public record ExpertPerformanceDto
     public int AnsweredCount { get; set; } // پاسخ داده شده (فعلاً معادل کل در نظر گرفتیم تا منطق شما مشخص شود)
     public int ClosedCount { get; set; }   // بسته شده‌ها
     public int ActiveTickets { get; set; } // تیکت‌های باز/فعال
-    
+    public int ReferredCount { get; set; }
     public double AvgResponseTime { get; set; } // میانگین زمان پاسخگویی (نیاز به محاسبه دارد)
     public double AvgRating { get; set; }       // امتیاز (در صورت داشتن سیستم امتیازدهی)
 }

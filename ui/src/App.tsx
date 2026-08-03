@@ -30,6 +30,8 @@ import TicketUserDetailsPage from './pages/ticket_user/ticket_details';
 import ManagerTicketReportsPage from './pages/report_manager';
 import LoginInMobile from './pages/LoginInMobile';
 import MessageTemplatePage from './pages/message_template';
+import ExpertPerformanceReportPage from './pages/reports/ExpertPerformanceReportPage';
+import DepartmentPerformanceReportPage from './pages/reports/DepartmentPerformancePage';
 
 function App() {
   return (
@@ -45,6 +47,8 @@ function App() {
         <Route path="/" element={<DashboardLayout />}>
           <Route index element={<HomePage />} />
           <Route path="reports" element={<ManagerTicketReportsPage />} />
+          <Route path="reports/experts" element={<ExpertPerformanceReportPage/>} />
+          <Route path="reports/departments" element={<DepartmentPerformanceReportPage/>} />
 
 
           <Route path="test" element={<TestPage />} />
