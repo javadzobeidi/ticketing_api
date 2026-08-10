@@ -46,15 +46,26 @@ public sealed class SendTicketMessageCommandHandler(
         var userId= user.UserId;
 
         
-      var ticket= await context.Tickets.Where(d => d.IdentityCode == request.Code).FirstOrDefaultAsync();
+      var ticket= await context.Tickets
+          .Include(d=>d.TicketAssignments)
+          .Where(d => d.IdentityCode == request.Code).FirstOrDefaultAsync();
       if (ticket == null)
           throw new NotFoundException("اطلاعات تیکت یافت نشد");
 
-     
-      
 
-      if (ticket.CurrentAssignmentUserId.HasValue && ticket.CurrentAssignmentUserId != user.UserId)
+      if (ticket.TicketAssignments.Select(d => d.FromUserId).Contains(user.UserId) ||
+          (ticket.CurrentAssignmentUserId.HasValue && ticket.CurrentAssignmentUserId == user.UserId)
+          || ticket.CurrentAssignmentUserId.HasValue==false
+         )
+      {
+          
+      }
+      else
+      {
           throw new Exception("امکان ارسال پیام نمی باشد");
+
+      }
+      
 
       if (ticket.CurrentAssignmentUserId.GetValueOrDefault() <= 0)
           ticket.CurrentAssignmentUserId = userId;

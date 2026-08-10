@@ -28,6 +28,7 @@ public record TicketListItem
     public string User { set; get; }
     public string LastAssignmentUser { set; get; }
     public string Date { set; get; }
+    public DateTime TicketDate { set; get; }
     public string Time { set; get; }
     public string City { set; get; }
     public string Status { set; get; }
@@ -153,7 +154,7 @@ public sealed class GetTicketsListForManagerHandler(
             {
                 User = d.User != null ? d.User.FirstName + " " + d.User.LastName : "بدون کاربر",
                 LastAssignmentUser=d.CurrentAssignmentUser!=null?d.CurrentAssignmentUser.FirstName+" "+d.CurrentAssignmentUser.LastName:"در انتظار کارشناس",
-
+                TicketDate=d.TicketDate,
                 Date = d.DateFa,
                 Time = d.TimeFa,
                 Code = d.IdentityCode,
@@ -170,7 +171,7 @@ public sealed class GetTicketsListForManagerHandler(
             .AsNoTracking() .ToList();
         
         
-        return appotinetms;
+        return appotinetms.OrderByDescending(d=>d.TicketDate).ToList();
 
     }
 }

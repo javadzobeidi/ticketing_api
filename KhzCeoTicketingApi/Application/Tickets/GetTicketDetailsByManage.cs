@@ -37,7 +37,7 @@ public record TicketDetailsItem
     public bool CanDelete { set; get; }
 
     public long? CurrentAssignUserId { set; get; }
-
+    public List<long> AssignmentsUsers { set; get; } = new List<long>();
 
     public List<TicketDetailsMessageItem> Messages { set; get; }
 }
@@ -109,6 +109,7 @@ public sealed class GetTicketDetailsByManageHandler(
           Time = d.TimeFa,
           User= d.User.FirstName+" "+d.User.LastName,
           CurrentAssignUserId=d.CurrentAssignmentUserId,
+          AssignmentsUsers=d.TicketAssignments.Select(d=>d.FromUserId.Value).ToList(),
        Messages=     d.TicketMessages.Select(ap => new TicketDetailsMessageItem
             {
                 Id=ap.Id,
@@ -139,6 +140,11 @@ public sealed class GetTicketDetailsByManageHandler(
          if ( item.CurrentAssignUserId == user.UserId || item.CurrentAssignUserId==null)
              item.CanProcess = true;
      }
+
+     if (item.AssignmentsUsers.Contains(user.UserId))
+         item.CanProcess = true;
+     
+     
      
      DateTime dt=DateTime.Now;
      foreach (var m in item.Messages)
