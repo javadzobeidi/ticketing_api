@@ -31,7 +31,7 @@ import ManagerTicketReportsPage from './pages/report_manager';
 import LoginInMobile from './pages/LoginInMobile';
 import MessageTemplatePage from './pages/message_template';
 import ExpertPerformanceReportPage from './pages/reports/ExpertPerformanceReportPage';
-import DepartmentPerformanceReportPage from './pages/reports/DepartmentPerformancePage';
+import DepartmentPerformancePagePerUser from './pages/reports/DepartmentPerformancePagePerUser';
 
 function App() {
   return (
@@ -48,7 +48,7 @@ function App() {
           <Route index element={<HomePage />} />
           <Route path="reports" element={<ManagerTicketReportsPage />} />
           <Route path="reports/experts" element={<ExpertPerformanceReportPage/>} />
-          <Route path="reports/departments" element={<DepartmentPerformanceReportPage/>} />
+          <Route path="reports/departments" element={<DepartmentPerformancePagePerUser/>} />
 
 
           <Route path="test" element={<TestPage />} />

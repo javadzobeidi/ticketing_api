@@ -19,8 +19,7 @@ import Cookies from "js-cookie";
 
 const navigation = [
   { name: "داشبورد", href: "/", icon: LayoutDashboard,roles:[Role.User,Role.Admin,Role.UnitExpert,Role.UnitManager],permissions:"" },
-   { name: "گزارشات کارشناسان ", href: "/reports/experts", icon: LayoutDashboard,roles:[Role.Admin] },
-   { name: "گزارشات واحد ها", href: "/reports/departments", icon: LayoutDashboard,roles:[Role.Admin] },
+   { name: "گزارشات کارشناسان", href: "/reports/departments", icon: LayoutDashboard,roles:[Role.Admin] },
    
   { name: "لیست کاربران", href: "/users", icon: Users ,roles:[Role.Admin],permissions:""},
   { name: "لیست واحد ها", href: "/units", icon: Archive ,roles:[Role.Admin],permissions:""},

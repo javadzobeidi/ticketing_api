@@ -8,7 +8,7 @@ import { Button } from '@/src/components/ui/button';
 import { Checkbox } from '@/src/components/ui/checkbox';
 import { apiServices } from '@/src/apis';
 import { ComboboxField } from '@/src/components/ui/Combobox';
-import { Plus } from 'lucide-react';
+import { Plus ,X} from 'lucide-react';
 
 import { AlertModal, TreeViewField } from '@/src/components/ui'
 import { Badge } from '@/src/components/ui/badge';
@@ -58,12 +58,32 @@ const UserProfile: React.FC<UserProfileProps> = ({ profile, cities, roles,
     const watchCity = watch("cityId");
     const watchDepartments=watch("branchDepartments")
 
+   
     const handleAddDepartment = () => {
-        const currentDepartments = selectDepartmentId || [];
+        // جلوگیری از خطای خالی بودن انتخاب‌ها
+        if (!branchDepartmentId || !selectDepartmentId) return;
+
+        // بررسی اینکه آیا این شعبه از قبل اضافه شده یا نه (جلوگیری از تکرار)
+        const currentDepartments = watchDepartments || [];
+        const isDuplicate = currentDepartments.some(d => d.id === branchDepartmentId);
+        
+        if (isDuplicate) return;
+
         const nodeItem = Utils.findNode(branchHierarchy, selectDepartmentId, "id");
 
-        setValue("branchDepartments", [...watchDepartments, {title:nodeItem.title,id:branchDepartmentId}]);
+        setValue("branchDepartments", [
+            ...currentDepartments, 
+            { title: nodeItem.title, id: branchDepartmentId }
+        ]);
     };
+
+    const handleRemoveDepartment = (idToRemove) => {
+        const currentDepartments = watchDepartments || [];
+        const updatedDepartments = currentDepartments.filter(d => d.id !== idToRemove);
+        
+        setValue("branchDepartments", updatedDepartments);
+    };
+
 
 
     const updateMutation = useMutation({
@@ -274,7 +294,13 @@ setBranchDepartmentId(parent.branches[0].id)
                         <div>
 
                         {watchDepartments?.map(d => (
-                            <Badge key={d.id} variant="secondary">{d.title}</Badge>
+                            <Badge key={d.id} variant="secondary">{d.title}
+                            <X 
+                    className="h-3 w-3 text-red-500 hover:text-red-700 cursor-pointer mr-1" 
+                    onClick={() => handleRemoveDepartment(d.id)} 
+                />
+                            
+                            </Badge>
                         ))}
 
 
@@ -294,15 +320,6 @@ setBranchDepartmentId(parent.branches[0].id)
 
                 
                 </div>
-
-
-
-
-
-          
-
-                
-
 
 
 
