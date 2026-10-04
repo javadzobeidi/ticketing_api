@@ -9,6 +9,7 @@ namespace KhzCeoTicketingApi.Application.Departments;
 public sealed record UpdateDepartmentCommand : ICommand<DepartmentDto>
 {
     public int Id { set; get; }
+    public int? parentId { set; get; }
     public string Title { get; init; } = string.Empty;
     public bool IsActive { get; init; } = true;
 }

@@ -7,6 +7,7 @@ namespace KhzCeoTicketingApi.Application.Departments;
 
 public sealed record CreateDepartmentCommand : ICommand<DepartmentDto>
 {
+    public int? ParentId { set; get; }
     public string Title { get; init; } = string.Empty;
     public bool IsActive { get; init; } = true;
 }
@@ -30,7 +31,9 @@ public sealed class CreateDepartmentCommandHandler(IApplicationDbContext context
         var department = new Department
         {
             Title = command.Title,
-            IsActive = command.IsActive
+            IsActive = command.IsActive,
+            ParentId = command.ParentId
+            
         };
         context.Departments.Add(department);
         await context.SaveChangesAsync(cancellationToken);

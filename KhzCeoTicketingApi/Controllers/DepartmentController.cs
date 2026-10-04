@@ -37,7 +37,7 @@ public class DepartmentController : ApiControllerBase
     }
 
     [HttpDelete("{id}")]
-    public async Task<ActionResult<bool>> Delete(Guid id, CancellationToken cancellationToken)
+    public async Task<ActionResult<bool>> Delete(long id, CancellationToken cancellationToken)
     {
         var command = new DeleteDepartmentCommand { Id = id };
         var result = await Mediator.Send(command, cancellationToken);

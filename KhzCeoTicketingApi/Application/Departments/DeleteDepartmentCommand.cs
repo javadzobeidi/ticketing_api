@@ -1,12 +1,13 @@
 ﻿using Application.Common.Exceptions;
 using FluentValidation;
 using KhzCeoTicketingApi.Application.Common.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace KhzCeoTicketingApi.Application.Departments;
 
 public sealed record DeleteDepartmentCommand : ICommand<bool>
 {
-    public Guid Id { get; init; }
+    public long Id { get; init; }
 }
 public sealed class DeleteDepartmentCommandValidation : AbstractValidator<DeleteDepartmentCommand>
 {
@@ -21,9 +22,9 @@ public sealed class DeleteDepartmentCommandHandler(IApplicationDbContext context
 
     public async ValueTask<bool> Handle(DeleteDepartmentCommand command, CancellationToken cancellationToken)
     {
-        var department = await context.Departments
-            .FindAsync(new object[] { command.Id }, cancellationToken);
-
+        var department = await context.Departments.Where(d=>d.Id==command.Id).FirstOrDefaultAsync();
+            
+            
         if (department == null)
             throw new NotFoundException($"واحد یافت نشد");
 
